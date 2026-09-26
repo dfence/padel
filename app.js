@@ -7,10 +7,10 @@ const COMPETITION_START_DATE = "2026-10-01";
 
 const defaultState = {
   players: [
-    { id: "geert", name: "Geert" },
     { id: "philip", name: "Philip" },
-    { id: "ben", name: "Ben" },
     { id: "tom", name: "Tom" },
+    { id: "ben", name: "Ben" },
+    { id: "geert", name: "Geert" },
     { id: "wesley", name: "Wesley" },
     { id: "carl", name: "Carl" },
     { id: "stefan", name: "Stefan" },
