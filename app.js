@@ -1,8 +1,6 @@
 const ADMIN_CODE = "padel26/27";
 const PENALTY_GAMES = 2;
 const COMPETITION_START_DATE = "2026-10-01";
-const LEAGUE_STATE_ID = "padel-donderdag";
-const CONFIG = window.PADEL_APP_CONFIG || {};
 
 const defaultState = {
   players: [
@@ -57,7 +55,7 @@ const els = {
 
 async function loadState() {
   try {
-    const loadedState = hasSupabaseConfig() ? await loadSupabaseState() : await loadStaticState();
+    const loadedState = await loadStaticState();
     state = normalizeLoadedState(loadedState);
   } catch (error) {
     console.warn("Centrale data laden mislukt", error);
@@ -90,58 +88,14 @@ function hasAnyCompleteScoreInRounds(rounds) {
   return rounds.some((round) => round.matches.some(hasCompleteScore));
 }
 
-function hasSupabaseConfig() {
-  return CONFIG.storageMode === "supabase" && Boolean(CONFIG.supabaseUrl) && Boolean(CONFIG.supabaseAnonKey);
-}
-
 async function loadStaticState() {
   const response = await fetch("data/league-state.json", { cache: "no-store" });
   if (!response.ok) return structuredClone(defaultState);
   return response.json();
 }
 
-async function loadSupabaseState() {
-  const url = `${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/league_state?id=eq.${encodeURIComponent(LEAGUE_STATE_ID)}&select=data`;
-  const response = await fetch(url, {
-    headers: supabaseHeaders()
-  });
-  if (!response.ok) throw new Error(`Supabase read failed: ${response.status}`);
-  const rows = await response.json();
-  return rows[0]?.data || structuredClone(defaultState);
-}
-
 async function saveState() {
-  if (!hasSupabaseConfig()) {
-    return true;
-  }
-
-  const url = `${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/league_state?on_conflict=id`;
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      ...supabaseHeaders(),
-      Prefer: "resolution=merge-duplicates,return=minimal"
-    },
-    body: JSON.stringify({
-      id: LEAGUE_STATE_ID,
-      data: state
-    })
-  });
-
-  if (!response.ok) {
-    alert("Bewaren in de centrale database is mislukt. Controleer Supabase policies/config.");
-    return false;
-  }
-
   return true;
-}
-
-function supabaseHeaders() {
-  return {
-    apikey: CONFIG.supabaseAnonKey,
-    Authorization: `Bearer ${CONFIG.supabaseAnonKey}`,
-    "Content-Type": "application/json"
-  };
 }
 
 function playerName(id) {
@@ -327,7 +281,7 @@ function render() {
   const nextRoundInfo = getNextRoundInfo();
   els.adminToggle.textContent = isAdmin ? "Sluiten" : "Admin";
   els.adminState.textContent = isAdmin ? "Ontgrendeld" : "Vergrendeld";
-  els.storageState.textContent = hasSupabaseConfig() ? "Centrale database" : "GitHub JSON-modus";
+  els.storageState.textContent = "GitHub JSON-modus";
   els.nextDate.textContent = formatDate(nextRoundInfo.round.date);
   els.nextRoundButton.title = "Bekijk details van de volgende ronde";
   els.roundCount.textContent = state.rounds.length;
