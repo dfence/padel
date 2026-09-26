@@ -10,7 +10,8 @@
   --brand-2: #1f7a65;
   --accent: #d59c31;
   --danger: #b33434;
-  --shadow: 0 18px 48px rgba(18, 35, 30, 0.11);
+  --shadow: 0 12px 34px rgba(18, 35, 30, 0.09);
+  --shadow-soft: 0 1px 0 rgba(18, 35, 30, 0.04);
 }
 
 * {
@@ -24,8 +25,9 @@ html {
 body {
   margin: 0;
   background:
-    radial-gradient(circle at 10% 0%, rgba(31, 122, 101, 0.15), transparent 28rem),
-    linear-gradient(180deg, #edf3ee 0%, var(--bg) 34rem);
+    radial-gradient(circle at 8% 0%, rgba(31, 122, 101, 0.14), transparent 22rem),
+    radial-gradient(circle at 90% 8%, rgba(213, 156, 49, 0.12), transparent 18rem),
+    linear-gradient(180deg, #eff5f1 0%, var(--bg) 26rem);
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -111,9 +113,9 @@ body.is-admin .admin-panel.admin-only {
 .app-header {
   position: relative;
   overflow: hidden;
-  padding: 18px clamp(16px, 4vw, 48px) 30px;
+  padding: 16px clamp(16px, 4vw, 48px) 26px;
   background:
-    linear-gradient(135deg, rgba(13, 47, 39, 0.98), rgba(19, 69, 59, 0.96)),
+    linear-gradient(135deg, rgba(13, 47, 39, 0.98), rgba(20, 82, 68, 0.96)),
     var(--brand);
   color: #fff;
 }
@@ -140,7 +142,7 @@ body.is-admin .admin-panel.admin-only {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  margin-bottom: 42px;
+  margin-bottom: 30px;
 }
 
 .topbar strong {
@@ -189,16 +191,9 @@ body.is-admin .admin-panel.admin-only {
 
 .app-header h1 {
   margin: 6px 0 0;
-  font-size: clamp(2.6rem, 9vw, 5.6rem);
-  line-height: 0.94;
-}
-
-.hero-text {
-  max-width: 33rem;
-  margin: 14px 0 0;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: clamp(1rem, 2.4vw, 1.25rem);
-  line-height: 1.5;
+  max-width: 11ch;
+  font-size: clamp(2.35rem, 8vw, 4.8rem);
+  line-height: 0.98;
 }
 
 .court-lines {
@@ -235,16 +230,16 @@ body.is-admin .admin-panel.admin-only {
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  width: min(780px, 100%);
-  margin-top: 26px;
+  gap: 8px;
+  width: min(700px, 100%);
+  margin-top: 22px;
 }
 
 .hero-stats div {
   min-width: 0;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px 11px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
 }
@@ -263,12 +258,12 @@ body.is-admin .admin-panel.admin-only {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: clamp(1rem, 2.4vw, 1.3rem);
+  font-size: clamp(0.98rem, 2.2vw, 1.22rem);
 }
 
 .shell {
   width: min(1180px, calc(100% - 28px));
-  margin: -18px auto 50px;
+  margin: -14px auto 50px;
   position: relative;
   z-index: 2;
 }
@@ -278,7 +273,7 @@ body.is-admin .admin-panel.admin-only {
   background: var(--panel);
   border: 1px solid rgba(219, 227, 221, 0.9);
   border-radius: 8px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
   backdrop-filter: blur(18px);
 }
 
@@ -338,6 +333,10 @@ body.is-admin .admin-panel.admin-only {
   padding: clamp(14px, 2vw, 18px);
 }
 
+.leaderboard-panel {
+  box-shadow: var(--shadow);
+}
+
 .panel-title {
   display: flex;
   align-items: center;
@@ -364,12 +363,12 @@ body.is-admin .admin-panel.admin-only {
 
 .leaderboard-card {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: 40px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 12px;
+  padding: 10px;
   background: #fff;
 }
 
@@ -381,8 +380,8 @@ body.is-admin .admin-panel.admin-only {
 .rank-badge {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--brand);
   color: #fff;
@@ -407,7 +406,7 @@ body.is-admin .admin-panel.admin-only {
 }
 
 .leaderboard-card-main strong {
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .leaderboard-card-main span {
@@ -420,14 +419,14 @@ body.is-admin .admin-panel.admin-only {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
   margin: 4px 0 0;
 }
 
 .leaderboard-card dl div {
   min-width: 0;
   border-radius: 8px;
-  padding: 8px;
+  padding: 7px;
   background: var(--soft);
 }
 
@@ -571,7 +570,7 @@ select {
 .match-card {
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 14px;
+  padding: 12px;
   background: linear-gradient(180deg, #fff, #fbfcfa);
 }
 
@@ -700,20 +699,38 @@ menu {
 
 @media (max-width: 680px) {
   .app-header {
-    padding: 16px 14px 28px;
+    padding: 14px 12px 20px;
   }
 
   .topbar {
-    margin-bottom: 32px;
+    margin-bottom: 22px;
   }
 
   .hero-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 18px;
+  }
+
+  .hero-stats div {
+    padding: 9px 8px;
+  }
+
+  .hero-stats span {
+    font-size: 0.64rem;
+  }
+
+  .hero-stats strong {
+    font-size: 0.88rem;
+  }
+
+  .app-header h1 {
+    max-width: 10ch;
+    font-size: clamp(2.05rem, 12vw, 3.2rem);
   }
 
   .shell {
-    width: calc(100% - 20px);
-    margin-top: -14px;
+    width: calc(100% - 18px);
+    margin-top: -8px;
   }
 
   .toolbar {
@@ -749,10 +766,10 @@ menu {
   }
 
   .court-lines {
-    right: -24px;
-    bottom: 96px;
-    width: 190px;
-    opacity: 0.42;
+    right: -42px;
+    bottom: 76px;
+    width: 170px;
+    opacity: 0.32;
   }
 
   .round-header {
@@ -761,6 +778,7 @@ menu {
 
   .teams {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .teams > strong {
@@ -769,6 +787,20 @@ menu {
 
   .team p {
     min-height: auto;
+  }
+
+  .team {
+    grid-template-columns: minmax(0, 1fr) 76px;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px;
+    background: #fff;
+  }
+
+  .team input {
+    min-height: 48px;
   }
 
   menu {

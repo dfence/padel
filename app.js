@@ -1,5 +1,6 @@
-const STORAGE_KEY = "padel-thursday-state-v1";
-const ADMIN_SESSION_KEY = "padel-thursday-admin";
+const LEGACY_STORAGE_KEY = "padel-thursday-state-v1";
+const STORAGE_KEY = "padel-donderdag-state-v1";
+const ADMIN_SESSION_KEY = "padel-donderdag-admin";
 const ADMIN_CODE = "geert";
 const PENALTY_GAMES = 2;
 const COMPETITION_START_DATE = "2026-10-01";
@@ -46,7 +47,7 @@ const els = {
 };
 
 function loadState() {
-  const raw = localStorage.getItem(STORAGE_KEY);
+  const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
   if (!raw) return structuredClone(defaultState);
 
   try {
@@ -79,15 +80,6 @@ function formatDate(dateString) {
     month: "short",
     year: "numeric"
   }).format(new Date(`${dateString}T12:00:00`));
-}
-
-function nextThursday() {
-  const date = new Date();
-  date.setHours(12, 0, 0, 0);
-  const day = date.getDay();
-  const offset = (4 - day + 7) % 7 || 7;
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().slice(0, 10);
 }
 
 function addWeeks(dateString, weeks) {
@@ -534,7 +526,7 @@ els.exportData.addEventListener("click", () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `padel-thursday-${new Date().toISOString().slice(0, 10)}.json`;
+  link.download = `padel-donderdag-${new Date().toISOString().slice(0, 10)}.json`;
   link.click();
   URL.revokeObjectURL(url);
 });
