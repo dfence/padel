@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,66 +10,68 @@
   </head>
   <body>
     <header class="app-header">
-      <nav class="topbar" aria-label="App controls">
-        <strong>Padel Thursday</strong>
+      <nav class="topbar" aria-label="Appbediening">
+        <strong><span class="brand-mark" aria-hidden="true"></span>Padel</strong>
         <button class="ghost light" id="admin-toggle" type="button">Admin</button>
       </nav>
       <div class="hero-copy">
-        <p class="eyebrow">Thursday championship</p>
+        <p class="eyebrow">Donderdagcompetitie</p>
         <h1>Padel Thursday</h1>
-        <p class="hero-text">Eight players. Rotating teams. One very honest leaderboard.</p>
+        <p class="hero-text">Acht spelers, wisselende teams en een klassement dat elke donderdag opnieuw beweegt.</p>
       </div>
-      <div class="hero-stats" aria-label="Competition summary">
+      <div class="court-lines" aria-hidden="true"></div>
+      <div class="hero-stats" aria-label="Competitieoverzicht">
         <div>
-          <span>Leader</span>
+          <span>Koploper</span>
           <strong id="leader-name">-</strong>
         </div>
         <div>
-          <span>Next round</span>
+          <span>Volgende ronde</span>
           <strong id="next-date">-</strong>
         </div>
         <div>
-          <span>Rounds</span>
+          <span>Rondes</span>
           <strong id="round-count">0</strong>
         </div>
       </div>
     </header>
 
     <main class="shell">
-      <section class="toolbar admin-only" aria-label="Round controls">
+      <section class="toolbar admin-only" aria-label="Rondebediening">
         <div>
-          <p class="label">Admin tools</p>
-          <strong id="admin-state">Locked</strong>
+          <p class="label">Admin</p>
+          <strong id="admin-state">Vergrendeld</strong>
         </div>
-        <div class="segmented" aria-label="Round type">
+        <div class="segmented" aria-label="Rondetype">
           <button class="active" data-round-type="auto" type="button">Auto</button>
-          <button data-round-type="full" type="button">All 19:00</button>
+          <button data-round-type="full" type="button">Alles 19:00</button>
           <button data-round-type="split" type="button">Split</button>
         </div>
-        <button class="primary" id="generate-round" type="button">Generate Round</button>
-        <button class="ghost" id="load-demo" type="button">Load Demo</button>
+        <button class="primary" id="generate-round" type="button">Ronde maken</button>
+        <button class="ghost" id="load-demo" type="button">Demo laden</button>
       </section>
 
       <section class="grid">
         <article class="panel leaderboard-panel">
           <div class="panel-title">
             <div>
-              <p class="eyebrow">Championship</p>
-              <h2>Leaderboard</h2>
+              <p class="eyebrow">Competitie</p>
+              <h2>Klassement</h2>
             </div>
             <button class="small admin-only" id="reset-demo" type="button">Reset</button>
           </div>
+          <div id="leaderboard-cards" class="leaderboard-cards"></div>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Player</th>
+                  <th>Speler</th>
                   <th>Games</th>
-                  <th>Matches</th>
+                  <th>Wedstr.</th>
                   <th>19:00</th>
                   <th>20:30</th>
-                  <th>Penalty</th>
+                  <th>Straf</th>
                 </tr>
               </thead>
               <tbody id="leaderboard"></tbody>
@@ -80,10 +82,10 @@
         <article class="panel roster-panel">
           <div class="panel-title">
             <div>
-              <p class="eyebrow">Regular group</p>
-              <h2>Players</h2>
+              <p class="eyebrow">Vaste groep</p>
+              <h2>Spelers</h2>
             </div>
-            <button class="small admin-only" id="save-players" type="button">Save</button>
+            <button class="small admin-only" id="save-players" type="button">Opslaan</button>
           </div>
           <div id="players-list" class="players-list"></div>
         </article>
@@ -92,10 +94,10 @@
       <section class="panel">
         <div class="panel-title">
           <div>
-            <p class="eyebrow">Schedule and results</p>
-            <h2>Rounds</h2>
+            <p class="eyebrow">Planning en uitslagen</p>
+            <h2>Rondes</h2>
           </div>
-          <button class="small danger admin-only" id="clear-rounds" type="button">Clear Rounds</button>
+          <button class="small danger admin-only" id="clear-rounds" type="button">Rondes wissen</button>
         </div>
         <div id="rounds" class="rounds"></div>
       </section>
@@ -103,18 +105,18 @@
       <section class="panel admin-panel admin-only">
         <div class="panel-title">
           <div>
-            <p class="eyebrow">Backup</p>
+            <p class="eyebrow">Back-up</p>
             <h2>Data</h2>
           </div>
         </div>
         <div class="data-actions">
-          <button class="ghost" id="export-data" type="button">Export JSON</button>
+          <button class="ghost" id="export-data" type="button">JSON exporteren</button>
           <label class="ghost file-button">
-            Import JSON
+            JSON importeren
             <input id="import-data" type="file" accept="application/json">
           </label>
         </div>
-        <p class="fine-print">GitHub Pages can hide editing controls, but real admin-only score changes need the Supabase login layer.</p>
+        <p class="fine-print">GitHub Pages kan knoppen verbergen, maar echte beveiliging voor scorewijzigingen vraagt later om Supabase-login.</p>
       </section>
     </main>
 
@@ -132,17 +134,17 @@
             <p class="label match-time"></p>
             <h3></h3>
           </div>
-          <button class="small ghost mark-sub admin-only" type="button">Substitute</button>
+          <button class="small ghost mark-sub admin-only" type="button">Vervanger</button>
         </div>
         <div class="teams">
           <div class="team" data-team="a">
             <p></p>
-            <input inputmode="numeric" min="0" max="99" type="number" aria-label="Team A score">
+            <input inputmode="numeric" min="0" max="99" type="number" aria-label="Score team A">
           </div>
           <strong>vs</strong>
           <div class="team" data-team="b">
             <p></p>
-            <input inputmode="numeric" min="0" max="99" type="number" aria-label="Team B score">
+            <input inputmode="numeric" min="0" max="99" type="number" aria-label="Score team B">
           </div>
         </div>
         <div class="subs"></div>
@@ -151,19 +153,19 @@
 
     <dialog id="sub-dialog">
       <form method="dialog" class="dialog-body">
-        <h2>Substitute</h2>
+        <h2>Vervanger</h2>
         <label>
-          Regular player
+          Vaste speler
           <select id="sub-player"></select>
         </label>
         <label>
-          Substitute name
-          <input id="sub-name" type="text" maxlength="32" placeholder="Outside player">
+          Naam vervanger
+          <input id="sub-name" type="text" maxlength="32" placeholder="Invaller">
         </label>
         <menu>
-          <button value="cancel" type="submit">Cancel</button>
-          <button value="remove" class="ghost danger" type="submit">Remove</button>
-          <button value="save" class="primary" type="submit">Save</button>
+          <button value="cancel" type="submit">Annuleren</button>
+          <button value="remove" class="ghost danger" type="submit">Verwijderen</button>
+          <button value="save" class="primary" type="submit">Opslaan</button>
         </menu>
       </form>
     </dialog>

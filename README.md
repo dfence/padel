@@ -1,61 +1,49 @@
 # Padel
 
-A small static PWA for an 8-player Thursday padel championship.
+Een kleine statische PWA voor een donderdagcompetitie met 8 padelspelers.
 
-GitHub repository: `https://github.com/dfence/padel`.
+GitHub-repository: `https://github.com/dfence/padel`.
 
-Published site: `https://dfence.github.io/padel/`.
+Gepubliceerde site: `https://dfence.github.io/padel/`.
 
-The competition is configured to start on Thursday `2026-10-01`.
+De competitie start op donderdag `2026-10-01`.
 
-## Current storage
+## Huidige opslag
 
-This version stores data in the admin browser with `localStorage`. It works well for a first GitHub Pages prototype:
+Deze versie bewaart data in de browser van de admin via `localStorage`. Dat werkt goed voor een eerste GitHub Pages-versie:
 
-- edit the 8 regular players
-- generate pairings from the current leaderboard
-- balance `19:00` starts during split weeks
-- enter match scores
-- mark substitutes with a `-2` games penalty for the regular player
-- export and import JSON backups
+- de 8 vaste spelers beheren
+- teams genereren op basis van het klassement
+- `19:00`-wedstrijden eerlijk verdelen tijdens splitweken
+- scores invoeren
+- vervangers aanduiden met een straf van `-2` games voor de vaste speler
+- JSON-back-ups exporteren en importeren
 
-Because GitHub Pages is static, there is no shared live database yet. Friends opening the page on their own phones will not automatically see the admin's local data.
+Omdat GitHub Pages statisch is, is er nog geen gedeelde live database. Vrienden die de pagina openen op hun eigen telefoon zien dus niet automatisch de lokale data van de admin.
 
-The public app opens in read-only mode. Use the `Admin` button and code `geert` to reveal score editing and schedule tools. This hides controls for normal use, but it is not real security because static frontend code can be inspected in the browser.
+De publieke app opent in alleen-lezen modus. Gebruik de knop `Admin` en code `geert` om scorebeheer en planning te tonen. Dit voorkomt toevallige wijzigingen, maar is geen echte beveiliging omdat frontendcode zichtbaar is in de browser.
 
-## Recommended next database step
+## Volgende Database
 
-For a shared app, keep the frontend on GitHub Pages and add a hosted database:
+Voor een gedeelde app blijft GitHub Pages prima als frontend, met daarachter een gehoste database:
 
-- Supabase: best fit for a small private league, with login, tables, and a free tier.
-- Firebase: also good, especially if realtime updates become important.
-- Google Sheets plus Apps Script: simple and familiar, but less app-like and harder to secure cleanly.
+- Supabase: beste keuze voor een kleine private competitie, met login, tabellen en een gratis tier.
+- Firebase: ook goed, zeker als realtime updates belangrijk worden.
+- Google Sheets plus Apps Script: vertrouwd en eenvoudig, maar minder app-achtig en lastiger netjes te beveiligen.
 
-The app logic is written so the local save/load functions can later be swapped for a backend without changing the league rules.
+De eerste databasevariant staat in `database/supabase.sql`. Die maakt een gedeelde JSON-state aan in Supabase: eenvoudig genoeg voor deze competitie zolang de regels nog evolueren.
 
-The first database script is in `database/supabase.sql`. It creates one shared JSON state row in Supabase, which is the simplest useful shape for this league while the rules are still evolving.
+## Testen
 
-## Testing with fake scores
+Gebruik de knop `Demo laden` in adminmodus. Die vervangt de huidige rondes door zes fictieve donderdagen, inclusief een vervanger met strafpunten.
 
-Use the `Load Demo` button in the app. It replaces the current rounds with six fake scored Thursdays, including one substitute penalty.
+## Publiceren
 
-## Publishing on GitHub Pages
+1. Maak of hernoem de publieke repository naar `padel`.
+2. Zet de bestanden in de root van de repository.
+3. Open in GitHub `Settings > Pages`.
+4. Kies `Deploy from a branch`.
+5. Selecteer branch `main` en map `/ (root)`.
+6. Sla op en deel daarna de Pages-URL met de groep.
 
-1. In GitHub, create or rename the public repository to `padel`.
-2. Do not add a README, license, or `.gitignore` in GitHub.
-3. From this folder, run:
-
-```powershell
-git branch -M main
-git add .
-git commit -m "Initial padel league app"
-git remote add origin https://github.com/dfence/padel.git
-git push -u origin main
-```
-
-4. In GitHub, open `Settings > Pages`.
-5. Under `Build and deployment`, choose `Deploy from a branch`.
-6. Select branch `main` and folder `/ (root)`.
-7. Save, then share the Pages URL with the group.
-
-For now, use `Export` after updating scores so you have a backup file.
+Gebruik voorlopig `JSON exporteren` na scorewijzigingen zodat je altijd een back-up hebt.

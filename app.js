@@ -30,6 +30,7 @@ const els = {
   nextDate: document.querySelector("#next-date"),
   roundCount: document.querySelector("#round-count"),
   leaderboard: document.querySelector("#leaderboard"),
+  leaderboardCards: document.querySelector("#leaderboard-cards"),
   playersList: document.querySelector("#players-list"),
   savePlayers: document.querySelector("#save-players"),
   rounds: document.querySelector("#rounds"),
@@ -68,11 +69,11 @@ function saveState() {
 }
 
 function playerName(id) {
-  return state.players.find((player) => player.id === id)?.name || "Unknown";
+  return state.players.find((player) => player.id === id)?.name || "Onbekend";
 }
 
 function formatDate(dateString) {
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat("nl-BE", {
     weekday: "short",
     day: "2-digit",
     month: "short",
@@ -233,11 +234,11 @@ function render() {
   const stats = computeStats();
   document.body.classList.toggle("is-admin", isAdmin);
   const hasScores = stats.some((row) => row.matches > 0);
-  els.adminToggle.textContent = isAdmin ? "Lock" : "Admin";
-  els.adminState.textContent = isAdmin ? "Unlocked" : "Locked";
+  els.adminToggle.textContent = isAdmin ? "Sluiten" : "Admin";
+  els.adminState.textContent = isAdmin ? "Ontgrendeld" : "Vergrendeld";
   els.nextDate.textContent = formatDate(nextRoundDate());
   els.roundCount.textContent = state.rounds.length;
-  els.leaderName.textContent = hasScores && stats[0] ? stats[0].name : "No scores yet";
+  els.leaderName.textContent = hasScores && stats[0] ? stats[0].name : "Nog geen scores";
   renderRoundType();
   renderPlayers();
   renderLeaderboard(stats);
@@ -267,6 +268,7 @@ function renderPlayers() {
 
 function renderLeaderboard(stats = computeStats()) {
   els.leaderboard.replaceChildren();
+  els.leaderboardCards.replaceChildren();
 
   stats.forEach((row, index) => {
     const tr = document.createElement("tr");
@@ -280,6 +282,23 @@ function renderLeaderboard(stats = computeStats()) {
       <td class="number">${row.penalties}</td>
     `;
     els.leaderboard.append(tr);
+
+    const card = document.createElement("article");
+    card.className = "leaderboard-card";
+    card.innerHTML = `
+      <div class="rank-badge">${index + 1}</div>
+      <div class="leaderboard-card-main">
+        <strong>${escapeHtml(row.name)}</strong>
+        <span>${row.games} games</span>
+      </div>
+      <dl>
+        <div><dt>Wedstr.</dt><dd>${row.matches}</dd></div>
+        <div><dt>19:00</dt><dd>${row.early}</dd></div>
+        <div><dt>20:30</dt><dd>${row.late}</dd></div>
+        <div><dt>Straf</dt><dd>${row.penalties}</dd></div>
+      </dl>
+    `;
+    els.leaderboardCards.append(card);
   });
 }
 
@@ -289,7 +308,7 @@ function renderRounds() {
   if (!state.rounds.length) {
     const empty = document.createElement("p");
     empty.className = "empty";
-    empty.textContent = "No rounds yet. Generate the first Thursday to start.";
+    empty.textContent = "Nog geen rondes. Maak de eerste donderdag aan om te starten.";
     els.rounds.append(empty);
     return;
   }
@@ -302,10 +321,10 @@ function renderRounds() {
     header.className = "round-header";
     header.innerHTML = `
       <div>
-        <p class="eyebrow">${round.kind === "full" ? "All players at 19:00" : "Split week"}</p>
+        <p class="eyebrow">${round.kind === "full" ? "Iedereen om 19:00" : "Splitweek"}</p>
         <h3>${formatDate(round.date)}</h3>
       </div>
-      <button class="small ghost danger admin-only" data-delete-round="${round.id}" type="button">Delete</button>
+      <button class="small ghost danger admin-only" data-delete-round="${round.id}" type="button">Verwijderen</button>
     `;
     section.append(header);
 
@@ -324,7 +343,7 @@ function renderMatch(round, match) {
   const card = template.content.firstElementChild.cloneNode(true);
   card.dataset.roundId = round.id;
   card.dataset.matchId = match.id;
-  card.querySelector(".match-time").textContent = `${match.time} - Court ${match.court}`;
+  card.querySelector(".match-time").textContent = `${match.time} - Terrein ${match.court}`;
   card.querySelector("h3").textContent = `Match ${match.court}`;
 
   const teamA = card.querySelector('[data-team="a"]');
@@ -347,7 +366,7 @@ function renderMatch(round, match) {
     subsContainer.replaceChildren(
       ...subs.map(([playerId, subName]) => {
         const p = document.createElement("p");
-        p.textContent = `${playerName(playerId)} replaced by ${subName || "substitute"}: -${PENALTY_GAMES} games`;
+        p.textContent = `${playerName(playerId)} vervangen door ${subName || "invaller"}: -${PENALTY_GAMES} games`;
         return p;
       })
     );
@@ -360,7 +379,7 @@ function renderTeam(team, substitutes = {}) {
   return team
     .map((playerId) => {
       const name = escapeHtml(playerName(playerId));
-      const sub = substitutes[playerId] ? ` <span title="Substitute">(${escapeHtml(substitutes[playerId])})</span>` : "";
+      const sub = substitutes[playerId] ? ` <span title="Vervanger">(${escapeHtml(substitutes[playerId])})</span>` : "";
       return `${name}${sub}`;
     })
     .join("<br>");
@@ -392,7 +411,7 @@ els.adminToggle.addEventListener("click", () => {
     return;
   }
 
-  const code = prompt("Admin code");
+  const code = prompt("Admincode");
   if (code !== ADMIN_CODE) return;
   isAdmin = true;
   sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
@@ -403,7 +422,7 @@ els.generateRound.addEventListener("click", generateRound);
 
 els.loadDemo.addEventListener("click", () => {
   if (!isAdmin) return;
-  if (!confirm("Load six fake scored weeks? This replaces current rounds.")) return;
+  if (!confirm("Zes fictieve rondes laden? Dit vervangt de huidige rondes.")) return;
   loadDemoRounds();
   saveState();
   render();
@@ -485,7 +504,7 @@ els.subDialog.addEventListener("close", () => {
     delete match.substitutes[els.subPlayer.value];
   }
   if (els.subDialog.returnValue === "save") {
-    match.substitutes[els.subPlayer.value] = els.subName.value.trim() || "Substitute";
+    match.substitutes[els.subPlayer.value] = els.subName.value.trim() || "Invaller";
   }
 
   activeSubContext = null;
@@ -495,7 +514,7 @@ els.subDialog.addEventListener("close", () => {
 
 els.clearRounds.addEventListener("click", () => {
   if (!isAdmin) return;
-  if (!confirm("Clear all rounds and scores?")) return;
+  if (!confirm("Alle rondes en scores wissen?")) return;
   state.rounds = [];
   saveState();
   render();
@@ -503,7 +522,7 @@ els.clearRounds.addEventListener("click", () => {
 
 els.resetDemo.addEventListener("click", () => {
   if (!isAdmin) return;
-  if (!confirm("Reset players and rounds?")) return;
+  if (!confirm("Spelers en rondes resetten?")) return;
   state = structuredClone(defaultState);
   saveState();
   render();
@@ -527,7 +546,7 @@ els.importData.addEventListener("change", async (event) => {
   try {
     const imported = JSON.parse(await file.text());
     if (!Array.isArray(imported.players) || imported.players.length !== 8) {
-      throw new Error("Expected exactly 8 players.");
+      throw new Error("Er worden exact 8 spelers verwacht.");
     }
     state = {
       players: imported.players,
@@ -537,7 +556,7 @@ els.importData.addEventListener("change", async (event) => {
     saveState();
     render();
   } catch (error) {
-    alert(`Could not import data: ${error.message}`);
+    alert(`Importeren mislukt: ${error.message}`);
   } finally {
     event.target.value = "";
   }
@@ -580,7 +599,7 @@ function loadDemoRounds() {
       match.scoreB = scorePairs[index][matchIndex][1];
     });
     if (index === 2) {
-      round.matches[0].substitutes[round.matches[0].teamA[1]] = "Demo sub";
+      round.matches[0].substitutes[round.matches[0].teamA[1]] = "Demo-invaller";
     }
     state.rounds.unshift(round);
   });

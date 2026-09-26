@@ -144,7 +144,43 @@ body.is-admin .admin-panel.admin-only {
 }
 
 .topbar strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 0.98rem;
+}
+
+.brand-mark {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.brand-mark::before,
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.brand-mark::before {
+  width: 3px;
+  height: 15px;
+  right: -5px;
+  bottom: -7px;
+  border-radius: 999px;
+  transform: rotate(-35deg);
+}
+
+.brand-mark::after {
+  width: 6px;
+  height: 6px;
+  right: 2px;
+  top: 3px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .hero-copy {
@@ -163,6 +199,37 @@ body.is-admin .admin-panel.admin-only {
   color: rgba(255, 255, 255, 0.76);
   font-size: clamp(1rem, 2.4vw, 1.25rem);
   line-height: 1.5;
+}
+
+.court-lines {
+  position: absolute;
+  right: clamp(18px, 7vw, 86px);
+  bottom: 28px;
+  z-index: 0;
+  width: min(330px, 45vw);
+  aspect-ratio: 1.8 / 1;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  opacity: 0.9;
+}
+
+.court-lines::before,
+.court-lines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.court-lines::before {
+  background:
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255, 255, 255, 0.14) calc(50% - 1px), rgba(255, 255, 255, 0.14) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(0deg, transparent calc(50% - 1px), rgba(255, 255, 255, 0.14) calc(50% - 1px), rgba(255, 255, 255, 0.14) calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+.court-lines::after {
+  inset: 18%;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 4px;
 }
 
 .hero-stats {
@@ -291,6 +358,96 @@ body.is-admin .admin-panel.admin-only {
   background: #fff;
 }
 
+.leaderboard-cards {
+  display: none;
+}
+
+.leaderboard-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.leaderboard-card:first-child {
+  background: #fbf6e8;
+  border-color: rgba(213, 156, 49, 0.38);
+}
+
+.rank-badge {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 950;
+}
+
+.leaderboard-card:first-child .rank-badge {
+  background: var(--accent);
+  color: #2d220d;
+}
+
+.leaderboard-card-main {
+  min-width: 0;
+}
+
+.leaderboard-card-main strong,
+.leaderboard-card-main span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-card-main strong {
+  font-size: 1.05rem;
+}
+
+.leaderboard-card-main span {
+  margin-top: 2px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.leaderboard-card dl {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 4px 0 0;
+}
+
+.leaderboard-card dl div {
+  min-width: 0;
+  border-radius: 8px;
+  padding: 8px;
+  background: var(--soft);
+}
+
+.leaderboard-card dt,
+.leaderboard-card dd {
+  margin: 0;
+}
+
+.leaderboard-card dt {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.leaderboard-card dd {
+  margin-top: 2px;
+  font-weight: 950;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -339,9 +496,26 @@ th.number {
   min-width: 0;
 }
 
+.player-row::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 35%, #fff 0 3px, transparent 3.5px),
+    radial-gradient(circle at 50% 75%, #fff 0 7px, transparent 7.5px),
+    var(--brand-2);
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .player-row span {
+  grid-column: 1;
+  grid-row: 1;
+  place-self: center;
   color: var(--brand-2);
   font-weight: 900;
+  font-size: 0;
 }
 
 input,
@@ -563,6 +737,22 @@ menu {
 
   .players-list {
     grid-template-columns: 1fr;
+  }
+
+  .leaderboard-cards {
+    display: grid;
+    gap: 10px;
+  }
+
+  .leaderboard-panel .table-wrap {
+    display: none;
+  }
+
+  .court-lines {
+    right: -24px;
+    bottom: 96px;
+    width: 190px;
+    opacity: 0.42;
   }
 
   .round-header {
