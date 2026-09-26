@@ -482,7 +482,20 @@ body.is-admin .admin-panel.admin-only {
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   min-width: 640px;
+}
+
+.rank-col {
+  width: 44px;
+}
+
+.player-col {
+  width: auto;
+}
+
+.stat-col {
+  width: 86px;
 }
 
 th,
@@ -490,6 +503,7 @@ td {
   padding: 12px 10px;
   border-bottom: 1px solid var(--line);
   text-align: left;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
