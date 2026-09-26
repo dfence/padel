@@ -21,7 +21,7 @@ Deze versie bewaart data in de browser van de admin via `localStorage`. Dat werk
 
 Omdat GitHub Pages statisch is, is er nog geen gedeelde live database. Vrienden die de pagina openen op hun eigen telefoon zien dus niet automatisch de lokale data van de admin.
 
-De publieke app opent in alleen-lezen modus. Gebruik de knop `Admin` en code `geert` om scorebeheer en planning te tonen. Dit voorkomt toevallige wijzigingen, maar is geen echte beveiliging omdat frontendcode zichtbaar is in de browser.
+De publieke app opent in alleen-lezen modus. Gebruik de knop `Admin` en code `padel26/27` om scorebeheer en planning te tonen. Dit voorkomt toevallige wijzigingen, maar is geen echte beveiliging omdat frontendcode zichtbaar is in de browser.
 
 ## Volgende Database
 
@@ -46,4 +46,4 @@ Gebruik de knop `Demo laden` in adminmodus. Die vervangt de huidige rondes door 
 5. Selecteer branch `main` en map `/ (root)`.
 6. Sla op en deel daarna de Pages-URL met de groep.
 
-Gebruik voorlopig `JSON exporteren` na scorewijzigingen zodat je altijd een back-up hebt.
+Gebruik voorlopig `JSON exporteren` na scorewijzigingen zodat je altijd een back-up hebt. Gebruik `Scorelog downloaden` om een Markdown-bestand met alle gespeelde rondes te bewaren in GitHub, bijvoorbeeld in de map `logs/`.

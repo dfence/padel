@@ -1,7 +1,7 @@
 const LEGACY_STORAGE_KEY = "padel-thursday-state-v1";
 const STORAGE_KEY = "padel-donderdag-state-v1";
 const ADMIN_SESSION_KEY = "padel-donderdag-admin";
-const ADMIN_CODE = "geert";
+const ADMIN_CODE = "padel26/27";
 const PENALTY_GAMES = 2;
 const COMPETITION_START_DATE = "2026-10-01";
 
@@ -43,6 +43,7 @@ const els = {
   clearRounds: document.querySelector("#clear-rounds"),
   resetDemo: document.querySelector("#reset-demo"),
   exportData: document.querySelector("#export-data"),
+  exportLog: document.querySelector("#export-log"),
   importData: document.querySelector("#import-data"),
   subDialog: document.querySelector("#sub-dialog"),
   subPlayer: document.querySelector("#sub-player"),
@@ -473,6 +474,68 @@ function renderTeamPlain(team, substitutes = {}) {
     .join(" + ");
 }
 
+function downloadTextFile(filename, content, type = "text/plain") {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function buildScoreLog() {
+  const playedRounds = [...state.rounds]
+    .filter((round) => round.matches.every(hasCompleteScore))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const lines = [
+    "# Scorelog Padel Donderdag",
+    "",
+    `Bijgewerkt: ${formatDate(new Date().toISOString().slice(0, 10))}`,
+    "",
+    `Gespeelde rondes: ${playedRounds.length}`,
+    ""
+  ];
+
+  if (!playedRounds.length) {
+    lines.push("Nog geen volledig gespeelde rondes.");
+    return lines.join("\n");
+  }
+
+  playedRounds.forEach((round, roundIndex) => {
+    lines.push(`## Ronde ${roundIndex + 1} - ${formatDate(round.date)}`);
+    lines.push("");
+    lines.push(`Type: ${round.kind === "full" ? "Iedereen om 19:00" : "Splitweek"}`);
+    lines.push("");
+
+    round.matches.forEach((match) => {
+      lines.push(`- ${match.time}, terrein ${match.court}: ${renderTeamPlain(match.teamA, match.substitutes)} ${match.scoreA}-${match.scoreB} ${renderTeamPlain(match.teamB, match.substitutes)}`);
+    });
+
+    const substitutions = round.matches.flatMap((match) => {
+      return Object.entries(match.substitutes || {}).map(([playerId, subName]) => {
+        return `${playerName(playerId)} vervangen door ${subName}: -${PENALTY_GAMES} games`;
+      });
+    });
+
+    if (substitutions.length) {
+      lines.push("");
+      substitutions.forEach((substitution) => lines.push(`  - ${substitution}`));
+    }
+
+    lines.push("");
+  });
+
+  lines.push("## Huidig Klassement");
+  lines.push("");
+  computeStats().forEach((row, index) => {
+    lines.push(`${index + 1}. ${row.name}: ${row.games} games, ${row.matches} wedstrijden, ${row.penalties} strafgames`);
+  });
+
+  return lines.join("\n");
+}
+
 els.adminToggle.addEventListener("click", () => {
   if (isAdmin) {
     isAdmin = false;
@@ -602,13 +665,16 @@ els.resetDemo.addEventListener("click", () => {
 
 els.exportData.addEventListener("click", () => {
   if (!isAdmin) return;
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `padel-donderdag-${new Date().toISOString().slice(0, 10)}.json`;
-  link.click();
-  URL.revokeObjectURL(url);
+  downloadTextFile(`padel-donderdag-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(state, null, 2), "application/json");
+});
+
+els.exportLog.addEventListener("click", () => {
+  if (!isAdmin) return;
+  const latestPlayedRound = [...state.rounds]
+    .filter((round) => round.matches.every(hasCompleteScore))
+    .sort((a, b) => b.date.localeCompare(a.date))[0];
+  const date = latestPlayedRound?.date || new Date().toISOString().slice(0, 10);
+  downloadTextFile(`scorelog-${date}.md`, buildScoreLog(), "text/markdown");
 });
 
 els.importData.addEventListener("change", async (event) => {
