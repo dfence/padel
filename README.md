@@ -4,6 +4,8 @@ A small static PWA for an 8-player Thursday padel championship.
 
 GitHub repository: `https://github.com/dfence/padel-thursday-league`.
 
+The competition is configured to start on Thursday `2026-10-01`.
+
 ## Current storage
 
 This version stores data in the admin browser with `localStorage`. It works well for a first GitHub Pages prototype:
@@ -16,6 +18,8 @@ This version stores data in the admin browser with `localStorage`. It works well
 - export and import JSON backups
 
 Because GitHub Pages is static, there is no shared live database yet. Friends opening the page on their own phones will not automatically see the admin's local data.
+
+The public app opens in read-only mode. Use the `Admin` button and code `geert` to reveal score editing and schedule tools. This hides controls for normal use, but it is not real security because static frontend code can be inspected in the browser.
 
 ## Recommended next database step
 

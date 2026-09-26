@@ -1,5 +1,8 @@
 const STORAGE_KEY = "padel-thursday-state-v1";
+const ADMIN_SESSION_KEY = "padel-thursday-admin";
+const ADMIN_CODE = "geert";
 const PENALTY_GAMES = 2;
+const COMPETITION_START_DATE = "2026-10-01";
 
 const defaultState = {
   players: [
@@ -18,9 +21,14 @@ const defaultState = {
 
 let state = loadState();
 let activeSubContext = null;
+let isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
 
 const els = {
+  adminToggle: document.querySelector("#admin-toggle"),
+  adminState: document.querySelector("#admin-state"),
+  leaderName: document.querySelector("#leader-name"),
   nextDate: document.querySelector("#next-date"),
+  roundCount: document.querySelector("#round-count"),
   leaderboard: document.querySelector("#leaderboard"),
   playersList: document.querySelector("#players-list"),
   savePlayers: document.querySelector("#save-players"),
@@ -81,7 +89,20 @@ function nextThursday() {
   return date.toISOString().slice(0, 10);
 }
 
+function addWeeks(dateString, weeks) {
+  const date = new Date(`${dateString}T12:00:00`);
+  date.setDate(date.getDate() + weeks * 7);
+  return date.toISOString().slice(0, 10);
+}
+
+function nextRoundDate() {
+  if (!state.rounds.length) return COMPETITION_START_DATE;
+  const latest = state.rounds.reduce((max, round) => (round.date > max ? round.date : max), state.rounds[0].date);
+  return addWeeks(latest, 1);
+}
+
 function computeStats() {
+  const orderIndex = new Map(state.players.map((player, index) => [player.id, index]));
   const stats = new Map(
     state.players.map((player) => [
       player.id,
@@ -125,6 +146,9 @@ function computeStats() {
   return [...stats.values()].sort((a, b) => {
     if (b.games !== a.games) return b.games - a.games;
     if (a.matches !== b.matches) return a.matches - b.matches;
+    if (orderIndex.get(a.id) !== orderIndex.get(b.id)) {
+      return orderIndex.get(a.id) - orderIndex.get(b.id);
+    }
     return a.name.localeCompare(b.name);
   });
 }
@@ -166,8 +190,9 @@ function earlyLoad(match, statsById) {
 }
 
 function generateRound() {
+  if (!isAdmin) return;
   const kind = roundKindForNext();
-  state.rounds.unshift(createRound(nextThursday(), kind));
+  state.rounds.unshift(createRound(nextRoundDate(), kind));
   saveState();
   render();
 }
@@ -205,10 +230,17 @@ function createRound(date, kind) {
 }
 
 function render() {
-  els.nextDate.textContent = formatDate(nextThursday());
+  const stats = computeStats();
+  document.body.classList.toggle("is-admin", isAdmin);
+  const hasScores = stats.some((row) => row.matches > 0);
+  els.adminToggle.textContent = isAdmin ? "Lock" : "Admin";
+  els.adminState.textContent = isAdmin ? "Unlocked" : "Locked";
+  els.nextDate.textContent = formatDate(nextRoundDate());
+  els.roundCount.textContent = state.rounds.length;
+  els.leaderName.textContent = hasScores && stats[0] ? stats[0].name : "No scores yet";
   renderRoundType();
   renderPlayers();
-  renderLeaderboard();
+  renderLeaderboard(stats);
   renderRounds();
 }
 
@@ -228,14 +260,15 @@ function renderPlayers() {
     const input = row.querySelector("input");
     input.value = player.name;
     input.dataset.playerId = player.id;
+    input.disabled = !isAdmin;
     els.playersList.append(row);
   });
 }
 
-function renderLeaderboard() {
+function renderLeaderboard(stats = computeStats()) {
   els.leaderboard.replaceChildren();
 
-  computeStats().forEach((row, index) => {
+  stats.forEach((row, index) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="number">${index + 1}</td>
@@ -272,7 +305,7 @@ function renderRounds() {
         <p class="eyebrow">${round.kind === "full" ? "All players at 19:00" : "Split week"}</p>
         <h3>${formatDate(round.date)}</h3>
       </div>
-      <button class="small ghost danger" data-delete-round="${round.id}" type="button">Delete</button>
+      <button class="small ghost danger admin-only" data-delete-round="${round.id}" type="button">Delete</button>
     `;
     section.append(header);
 
@@ -305,6 +338,8 @@ function renderMatch(round, match) {
   scoreB.value = match.scoreB;
   scoreA.dataset.score = "scoreA";
   scoreB.dataset.score = "scoreB";
+  scoreA.disabled = !isAdmin;
+  scoreB.disabled = !isAdmin;
 
   const subs = Object.entries(match.substitutes || {});
   const subsContainer = card.querySelector(".subs");
@@ -349,9 +384,25 @@ function findMatch(roundId, matchId) {
   return { round, match };
 }
 
+els.adminToggle.addEventListener("click", () => {
+  if (isAdmin) {
+    isAdmin = false;
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    render();
+    return;
+  }
+
+  const code = prompt("Admin code");
+  if (code !== ADMIN_CODE) return;
+  isAdmin = true;
+  sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+  render();
+});
+
 els.generateRound.addEventListener("click", generateRound);
 
 els.loadDemo.addEventListener("click", () => {
+  if (!isAdmin) return;
   if (!confirm("Load six fake scored weeks? This replaces current rounds.")) return;
   loadDemoRounds();
   saveState();
@@ -360,6 +411,7 @@ els.loadDemo.addEventListener("click", () => {
 
 document.querySelectorAll("[data-round-type]").forEach((button) => {
   button.addEventListener("click", () => {
+    if (!isAdmin) return;
     state.roundType = button.dataset.roundType;
     saveState();
     render();
@@ -367,6 +419,7 @@ document.querySelectorAll("[data-round-type]").forEach((button) => {
 });
 
 els.savePlayers.addEventListener("click", () => {
+  if (!isAdmin) return;
   document.querySelectorAll("#players-list input").forEach((input) => {
     const player = state.players.find((item) => item.id === input.dataset.playerId);
     if (player) player.name = input.value.trim() || player.name;
@@ -376,6 +429,7 @@ els.savePlayers.addEventListener("click", () => {
 });
 
 els.rounds.addEventListener("input", (event) => {
+  if (!isAdmin) return;
   const input = event.target.closest("input[data-score]");
   if (!input) return;
   const card = event.target.closest(".match-card");
@@ -387,6 +441,7 @@ els.rounds.addEventListener("input", (event) => {
 });
 
 els.rounds.addEventListener("click", (event) => {
+  if (!isAdmin) return;
   const deleteButton = event.target.closest("[data-delete-round]");
   if (deleteButton) {
     state.rounds = state.rounds.filter((round) => round.id !== deleteButton.dataset.deleteRound);
@@ -420,6 +475,7 @@ els.rounds.addEventListener("click", (event) => {
 });
 
 els.subDialog.addEventListener("close", () => {
+  if (!isAdmin) return;
   if (!activeSubContext || els.subDialog.returnValue === "cancel") return;
   const { match } = findMatch(activeSubContext.roundId, activeSubContext.matchId);
   if (!match) return;
@@ -438,6 +494,7 @@ els.subDialog.addEventListener("close", () => {
 });
 
 els.clearRounds.addEventListener("click", () => {
+  if (!isAdmin) return;
   if (!confirm("Clear all rounds and scores?")) return;
   state.rounds = [];
   saveState();
@@ -445,6 +502,7 @@ els.clearRounds.addEventListener("click", () => {
 });
 
 els.resetDemo.addEventListener("click", () => {
+  if (!isAdmin) return;
   if (!confirm("Reset players and rounds?")) return;
   state = structuredClone(defaultState);
   saveState();
@@ -452,6 +510,7 @@ els.resetDemo.addEventListener("click", () => {
 });
 
 els.exportData.addEventListener("click", () => {
+  if (!isAdmin) return;
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -462,6 +521,7 @@ els.exportData.addEventListener("click", () => {
 });
 
 els.importData.addEventListener("change", async (event) => {
+  if (!isAdmin) return;
   const file = event.target.files?.[0];
   if (!file) return;
   try {
@@ -512,9 +572,9 @@ function loadDemoRounds() {
   ];
 
   state.rounds = [];
-  [6, 5, 4, 3, 2, 1].forEach((weeksAgo, index) => {
+  [0, 1, 2, 3, 4, 5].forEach((weeksFromStart, index) => {
     const kind = index % 3 === 0 ? "full" : "split";
-    const round = createRound(thursdayWeeksAgo(weeksAgo), kind);
+    const round = createRound(addWeeks(COMPETITION_START_DATE, weeksFromStart), kind);
     round.matches.forEach((match, matchIndex) => {
       match.scoreA = scorePairs[index][matchIndex][0];
       match.scoreB = scorePairs[index][matchIndex][1];
@@ -524,12 +584,6 @@ function loadDemoRounds() {
     }
     state.rounds.unshift(round);
   });
-}
-
-function thursdayWeeksAgo(weeksAgo) {
-  const date = new Date(`${nextThursday()}T12:00:00`);
-  date.setDate(date.getDate() - weeksAgo * 7);
-  return date.toISOString().slice(0, 10);
 }
 
 if ("serviceWorker" in navigator) {
