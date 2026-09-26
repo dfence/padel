@@ -20,6 +20,8 @@ const defaultState = {
   roundType: "auto"
 };
 
+const DEFAULT_PLAYER_ORDER = defaultState.players.map((player) => player.id);
+
 let state = loadState();
 let activeSubContext = null;
 let isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
@@ -55,14 +57,27 @@ function loadState() {
     if (!Array.isArray(parsed.players) || parsed.players.length !== 8) {
       return structuredClone(defaultState);
     }
-    return {
+    return normalizeLoadedState({
       players: parsed.players,
       rounds: Array.isArray(parsed.rounds) ? parsed.rounds : [],
       roundType: parsed.roundType || "auto"
-    };
+    });
   } catch {
     return structuredClone(defaultState);
   }
+}
+
+function normalizeLoadedState(loadedState) {
+  if (loadedState.rounds.length) return loadedState;
+
+  const playersById = new Map(loadedState.players.map((player) => [player.id, player]));
+  const hasSamePlayers = DEFAULT_PLAYER_ORDER.every((id) => playersById.has(id));
+  if (!hasSamePlayers) return loadedState;
+
+  return {
+    ...loadedState,
+    players: DEFAULT_PLAYER_ORDER.map((id) => playersById.get(id))
+  };
 }
 
 function saveState() {

@@ -25,10 +25,10 @@ values (
   'padel-thursday',
   jsonb_build_object(
     'players', jsonb_build_array(
-      jsonb_build_object('id', 'geert', 'name', 'Geert'),
       jsonb_build_object('id', 'philip', 'name', 'Philip'),
-      jsonb_build_object('id', 'ben', 'name', 'Ben'),
       jsonb_build_object('id', 'tom', 'name', 'Tom'),
+      jsonb_build_object('id', 'ben', 'name', 'Ben'),
+      jsonb_build_object('id', 'geert', 'name', 'Geert'),
       jsonb_build_object('id', 'wesley', 'name', 'Wesley'),
       jsonb_build_object('id', 'carl', 'name', 'Carl'),
       jsonb_build_object('id', 'stefan', 'name', 'Stefan'),
