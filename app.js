@@ -74,16 +74,26 @@ function loadState() {
 }
 
 function normalizeLoadedState(loadedState) {
-  if (loadedState.rounds.length) return loadedState;
+  if (!hasAnyCompleteScoreInRounds(loadedState.rounds)) {
+    return {
+      ...loadedState,
+      players: orderedPlayersOrCurrent(loadedState.players),
+      rounds: []
+    };
+  }
 
-  const playersById = new Map(loadedState.players.map((player) => [player.id, player]));
+  return loadedState;
+}
+
+function orderedPlayersOrCurrent(players) {
+  const playersById = new Map(players.map((player) => [player.id, player]));
   const hasSamePlayers = DEFAULT_PLAYER_ORDER.every((id) => playersById.has(id));
-  if (!hasSamePlayers) return loadedState;
+  if (!hasSamePlayers) return players;
+  return DEFAULT_PLAYER_ORDER.map((id) => playersById.get(id));
+}
 
-  return {
-    ...loadedState,
-    players: DEFAULT_PLAYER_ORDER.map((id) => playersById.get(id))
-  };
+function hasAnyCompleteScoreInRounds(rounds) {
+  return rounds.some((round) => round.matches.some(hasCompleteScore));
 }
 
 function saveState() {
