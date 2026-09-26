@@ -8,24 +8,37 @@ Gepubliceerde site: `https://dfence.github.io/padel/`.
 
 De competitie start op donderdag `2026-10-01`.
 
-## Centrale Opslag
+## Opslag Met GitHub JSON
 
-De app is bedoeld om centraal te werken via Supabase. Gebruik geen browseropslag voor competitiegegevens. Zodra `config.js` op `storageMode: "supabase"` staat, lezen alle browsers dezelfde centrale `league_state` rij en worden scorewijzigingen centraal bewaard.
+De app gebruikt geen browseropslag voor competitiegegevens. In de eenvoudige GitHub Pages-versie leest iedereen dezelfde startdata uit `data/league-state.json`.
 
-Zonder Supabase-config toont de app alleen de statische startdata uit `data/league-state.json` en kunnen wijzigingen niet blijvend opgeslagen worden.
+GitHub Pages kan vanuit de browser geen bestanden in de repository overschrijven. Daarom werkt adminbeheer zo:
+
+1. Open de site en klik op `Admin`.
+2. Gebruik de code `padel26/27`.
+3. Maak rondes of vul scores in.
+4. Klik op `league-state.json downloaden`.
+5. Vervang in GitHub het bestand `data/league-state.json` door de download.
+6. Commit de wijziging. Daarna ziet iedereen dezelfde nieuwe stand.
+
+Zolang je het JSON-bestand nog niet terugzet in GitHub, blijven wijzigingen alleen in het geopende browservenster actief.
 
 De app ondersteunt:
 
 - de 8 vaste spelers beheren
 - teams genereren op basis van het klassement
 - `19:00`-wedstrijden eerlijk verdelen tijdens splitweken
-- scores centraal invoeren
+- scores invoeren en als nieuw `league-state.json` bestand downloaden
 - vervangers aanduiden met een straf van `-2` games voor de vaste speler
 - JSON-back-ups en scorelogs exporteren
 
 De publieke app opent in alleen-lezen modus. Gebruik de knop `Admin` en code `padel26/27` om scorebeheer en planning te tonen. Dit voorkomt toevallige wijzigingen, maar is geen echte beveiliging omdat frontendcode zichtbaar is in de browser.
 
-## Supabase Instellen
+## Optionele Centrale Opslag
+
+Wil je later toch automatisch centraal bewaren zonder handmatig JSON-bestand, dan kan Supabase nog steeds gebruikt worden. Zodra `config.js` op `storageMode: "supabase"` staat, lezen alle browsers dezelfde centrale `league_state` rij en worden scorewijzigingen centraal bewaard.
+
+### Supabase Instellen
 
 1. Maak een Supabase-project.
 2. Open de SQL editor en voer `database/supabase.sql` uit.
@@ -56,4 +69,4 @@ Gebruik de knop `Demo laden` in adminmodus. Die vervangt de huidige rondes door 
 5. Selecteer branch `main` en map `/ (root)`.
 6. Sla op en deel daarna de Pages-URL met de groep.
 
-Gebruik voorlopig `JSON exporteren` na scorewijzigingen zodat je altijd een back-up hebt. Gebruik `Scorelog downloaden` om een Markdown-bestand met alle gespeelde rondes te bewaren in GitHub, bijvoorbeeld in de map `logs/`.
+Gebruik `Scorelog downloaden` om een Markdown-bestand met alle gespeelde rondes te bewaren in GitHub, bijvoorbeeld in de map `logs/`.

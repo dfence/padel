@@ -39,6 +39,7 @@ const els = {
   savePlayers: document.querySelector("#save-players"),
   rounds: document.querySelector("#rounds"),
   generateRound: document.querySelector("#generate-round"),
+  storageState: document.querySelector("#storage-state"),
   loadDemo: document.querySelector("#load-demo"),
   clearRounds: document.querySelector("#clear-rounds"),
   resetDemo: document.querySelector("#reset-demo"),
@@ -111,8 +112,7 @@ async function loadSupabaseState() {
 
 async function saveState() {
   if (!hasSupabaseConfig()) {
-    alert("Centrale database is nog niet ingesteld. Stel Supabase in om wijzigingen voor iedereen te bewaren.");
-    return false;
+    return true;
   }
 
   const url = `${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/league_state?on_conflict=id`;
@@ -327,6 +327,7 @@ function render() {
   const nextRoundInfo = getNextRoundInfo();
   els.adminToggle.textContent = isAdmin ? "Sluiten" : "Admin";
   els.adminState.textContent = isAdmin ? "Ontgrendeld" : "Vergrendeld";
+  els.storageState.textContent = hasSupabaseConfig() ? "Centrale database" : "GitHub JSON-modus";
   els.nextDate.textContent = formatDate(nextRoundInfo.round.date);
   els.nextRoundButton.title = "Bekijk details van de volgende ronde";
   els.roundCount.textContent = state.rounds.length;
@@ -600,10 +601,6 @@ els.adminToggle.addEventListener("click", () => {
 
   const code = prompt("Admincode");
   if (code !== ADMIN_CODE) return;
-  if (!hasSupabaseConfig()) {
-    alert("Centrale database is nog niet ingesteld. Zet Supabase aan in config.js om als admin te wijzigen.");
-    return;
-  }
   isAdmin = true;
   render();
 });
@@ -722,7 +719,7 @@ els.resetDemo.addEventListener("click", async () => {
 
 els.exportData.addEventListener("click", () => {
   if (!isAdmin) return;
-  downloadTextFile(`padel-donderdag-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(state, null, 2), "application/json");
+  downloadTextFile("league-state.json", `${JSON.stringify(state, null, 2)}\n`, "application/json");
 });
 
 els.exportLog.addEventListener("click", () => {

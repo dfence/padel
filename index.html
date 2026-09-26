@@ -39,6 +39,7 @@
         <div>
           <p class="label">Admin</p>
           <strong id="admin-state">Vergrendeld</strong>
+          <small id="storage-state">GitHub JSON</small>
         </div>
         <div class="segmented" aria-label="Rondetype">
           <button class="active" data-round-type="auto" type="button">Auto</button>
@@ -108,14 +109,14 @@
           </div>
         </div>
         <div class="data-actions">
-          <button class="ghost" id="export-data" type="button">JSON exporteren</button>
+          <button class="ghost" id="export-data" type="button">league-state.json downloaden</button>
           <button class="ghost" id="export-log" type="button">Scorelog downloaden</button>
           <label class="ghost file-button">
             JSON importeren
             <input id="import-data" type="file" accept="application/json">
           </label>
         </div>
-        <p class="fine-print">Alle data wordt centraal bewaard zodra Supabase is ingesteld. Zonder centrale database kan de app geen scorewijzigingen opslaan.</p>
+        <p class="fine-print">GitHub Pages kan dit bestand niet zelf overschrijven. Download na wijzigingen league-state.json en vervang daarmee data/league-state.json in GitHub.</p>
       </section>
     </main>
 

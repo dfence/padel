@@ -310,6 +310,13 @@ body.is-admin .admin-panel.admin-only {
   margin-bottom: 16px;
 }
 
+.toolbar small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .label,
 .eyebrow {
   margin: 0;
