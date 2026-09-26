@@ -1,8 +1,10 @@
-# Padel Thursday League
+# Padel
 
 A small static PWA for an 8-player Thursday padel championship.
 
-GitHub repository: `https://github.com/dfence/padel-thursday-league`.
+GitHub repository: `https://github.com/dfence/padel`.
+
+Published site: `https://dfence.github.io/padel/`.
 
 The competition is configured to start on Thursday `2026-10-01`.
 
@@ -39,7 +41,7 @@ Use the `Load Demo` button in the app. It replaces the current rounds with six f
 
 ## Publishing on GitHub Pages
 
-1. In GitHub, create a public repository named `padel-thursday-league`.
+1. In GitHub, create or rename the public repository to `padel`.
 2. Do not add a README, license, or `.gitignore` in GitHub.
 3. From this folder, run:
 
@@ -47,7 +49,7 @@ Use the `Load Demo` button in the app. It replaces the current rounds with six f
 git branch -M main
 git add .
 git commit -m "Initial padel league app"
-git remote add origin https://github.com/dfence/padel-thursday-league.git
+git remote add origin https://github.com/dfence/padel.git
 git push -u origin main
 ```
 

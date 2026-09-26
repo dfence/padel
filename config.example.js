@@ -1,5 +1,5 @@
 window.PADEL_APP_CONFIG = {
-  repositoryName: "padel-thursday-league",
+  repositoryName: "padel",
   storageMode: "local",
   supabaseUrl: "",
   supabaseAnonKey: ""
