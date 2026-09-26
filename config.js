@@ -1,6 +1,6 @@
 window.PADEL_APP_CONFIG = {
   repositoryName: "padel",
-  storageMode: "supabase",
+  storageMode: "static",
   supabaseUrl: "",
   supabaseAnonKey: ""
 };

@@ -8,30 +8,40 @@ Gepubliceerde site: `https://dfence.github.io/padel/`.
 
 De competitie start op donderdag `2026-10-01`.
 
-## Huidige opslag
+## Centrale Opslag
 
-Deze versie bewaart data in de browser van de admin via `localStorage`. Dat werkt goed voor een eerste GitHub Pages-versie:
+De app is bedoeld om centraal te werken via Supabase. Gebruik geen browseropslag voor competitiegegevens. Zodra `config.js` op `storageMode: "supabase"` staat, lezen alle browsers dezelfde centrale `league_state` rij en worden scorewijzigingen centraal bewaard.
+
+Zonder Supabase-config toont de app alleen de statische startdata uit `data/league-state.json` en kunnen wijzigingen niet blijvend opgeslagen worden.
+
+De app ondersteunt:
 
 - de 8 vaste spelers beheren
 - teams genereren op basis van het klassement
 - `19:00`-wedstrijden eerlijk verdelen tijdens splitweken
-- scores invoeren
+- scores centraal invoeren
 - vervangers aanduiden met een straf van `-2` games voor de vaste speler
-- JSON-back-ups exporteren en importeren
-
-Omdat GitHub Pages statisch is, is er nog geen gedeelde live database. Vrienden die de pagina openen op hun eigen telefoon zien dus niet automatisch de lokale data van de admin.
+- JSON-back-ups en scorelogs exporteren
 
 De publieke app opent in alleen-lezen modus. Gebruik de knop `Admin` en code `padel26/27` om scorebeheer en planning te tonen. Dit voorkomt toevallige wijzigingen, maar is geen echte beveiliging omdat frontendcode zichtbaar is in de browser.
 
-## Volgende Database
+## Supabase Instellen
 
-Voor een gedeelde app blijft GitHub Pages prima als frontend, met daarachter een gehoste database:
+1. Maak een Supabase-project.
+2. Open de SQL editor en voer `database/supabase.sql` uit.
+3. Kopieer je Project URL en anon public key.
+4. Zet die waarden in `config.js`:
 
-- Supabase: beste keuze voor een kleine private competitie, met login, tabellen en een gratis tier.
-- Firebase: ook goed, zeker als realtime updates belangrijk worden.
-- Google Sheets plus Apps Script: vertrouwd en eenvoudig, maar minder app-achtig en lastiger netjes te beveiligen.
+```js
+window.PADEL_APP_CONFIG = {
+  repositoryName: "padel",
+  storageMode: "supabase",
+  supabaseUrl: "https://PROJECT.supabase.co",
+  supabaseAnonKey: "PUBLIC_ANON_KEY"
+};
+```
 
-De eerste databasevariant staat in `database/supabase.sql`. Die maakt een gedeelde JSON-state aan in Supabase: eenvoudig genoeg voor deze competitie zolang de regels nog evolueren.
+De huidige SQL laat de app centraal lezen en schrijven naar exact één rij. Dat maakt de competitie meteen bruikbaar op meerdere browsers. Voor echte harde adminbeveiliging is de volgende stap Supabase Auth met een admin-user en strengere RLS policies.
 
 ## Testen
 

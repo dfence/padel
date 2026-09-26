@@ -1,5 +1,5 @@
 create table if not exists public.league_state (
-  id text primary key default 'padel-thursday',
+  id text primary key default 'padel-donderdag',
   data jsonb not null,
   updated_at timestamptz not null default now()
 );
@@ -22,7 +22,7 @@ execute function public.touch_updated_at();
 
 insert into public.league_state (id, data)
 values (
-  'padel-thursday',
+  'padel-donderdag',
   jsonb_build_object(
     'players', jsonb_build_array(
       jsonb_build_object('id', 'philip', 'name', 'Philip'),
@@ -48,11 +48,15 @@ on public.league_state
 for select
 using (true);
 
--- For a quick private prototype, you can temporarily enable this update policy.
--- For the real version, replace it with Supabase Auth so only the admin can write.
+drop policy if exists "Prototype league insert" on public.league_state;
+create policy "Prototype league insert"
+on public.league_state
+for insert
+with check (id = 'padel-donderdag');
+
 drop policy if exists "Prototype league update" on public.league_state;
 create policy "Prototype league update"
 on public.league_state
 for update
-using (true)
-with check (true);
+using (id = 'padel-donderdag')
+with check (id = 'padel-donderdag');

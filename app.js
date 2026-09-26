@@ -1,9 +1,8 @@
-const LEGACY_STORAGE_KEY = "padel-thursday-state-v1";
-const STORAGE_KEY = "padel-donderdag-state-v1";
-const ADMIN_SESSION_KEY = "padel-donderdag-admin";
 const ADMIN_CODE = "padel26/27";
 const PENALTY_GAMES = 2;
 const COMPETITION_START_DATE = "2026-10-01";
+const LEAGUE_STATE_ID = "padel-donderdag";
+const CONFIG = window.PADEL_APP_CONFIG || {};
 
 const defaultState = {
   players: [
@@ -22,9 +21,10 @@ const defaultState = {
 
 const DEFAULT_PLAYER_ORDER = defaultState.players.map((player) => player.id);
 
-let state = loadState();
+let state = structuredClone(defaultState);
 let activeSubContext = null;
-let isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+let isAdmin = false;
+let isLoaded = false;
 
 const els = {
   adminToggle: document.querySelector("#admin-toggle"),
@@ -54,35 +54,28 @@ const els = {
   nextRoundDetails: document.querySelector("#next-round-details")
 };
 
-function loadState() {
-  const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
-  if (!raw) return structuredClone(defaultState);
-
+async function loadState() {
   try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed.players) || parsed.players.length !== 8) {
-      return structuredClone(defaultState);
-    }
-    return normalizeLoadedState({
-      players: parsed.players,
-      rounds: Array.isArray(parsed.rounds) ? parsed.rounds : [],
-      roundType: parsed.roundType || "auto"
-    });
-  } catch {
-    return structuredClone(defaultState);
+    const loadedState = hasSupabaseConfig() ? await loadSupabaseState() : await loadStaticState();
+    state = normalizeLoadedState(loadedState);
+  } catch (error) {
+    console.warn("Centrale data laden mislukt", error);
+    state = structuredClone(defaultState);
+  } finally {
+    isLoaded = true;
   }
 }
 
 function normalizeLoadedState(loadedState) {
-  if (!hasAnyCompleteScoreInRounds(loadedState.rounds)) {
-    return {
-      ...loadedState,
-      players: orderedPlayersOrCurrent(loadedState.players),
-      rounds: []
-    };
+  if (!loadedState || !Array.isArray(loadedState.players) || loadedState.players.length !== 8) {
+    return structuredClone(defaultState);
   }
 
-  return loadedState;
+  return {
+    players: orderedPlayersOrCurrent(loadedState.players),
+    rounds: Array.isArray(loadedState.rounds) ? loadedState.rounds : [],
+    roundType: loadedState.roundType || "auto"
+  };
 }
 
 function orderedPlayersOrCurrent(players) {
@@ -96,8 +89,59 @@ function hasAnyCompleteScoreInRounds(rounds) {
   return rounds.some((round) => round.matches.some(hasCompleteScore));
 }
 
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state, null, 2));
+function hasSupabaseConfig() {
+  return CONFIG.storageMode === "supabase" && Boolean(CONFIG.supabaseUrl) && Boolean(CONFIG.supabaseAnonKey);
+}
+
+async function loadStaticState() {
+  const response = await fetch("data/league-state.json", { cache: "no-store" });
+  if (!response.ok) return structuredClone(defaultState);
+  return response.json();
+}
+
+async function loadSupabaseState() {
+  const url = `${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/league_state?id=eq.${encodeURIComponent(LEAGUE_STATE_ID)}&select=data`;
+  const response = await fetch(url, {
+    headers: supabaseHeaders()
+  });
+  if (!response.ok) throw new Error(`Supabase read failed: ${response.status}`);
+  const rows = await response.json();
+  return rows[0]?.data || structuredClone(defaultState);
+}
+
+async function saveState() {
+  if (!hasSupabaseConfig()) {
+    alert("Centrale database is nog niet ingesteld. Stel Supabase in om wijzigingen voor iedereen te bewaren.");
+    return false;
+  }
+
+  const url = `${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/league_state?on_conflict=id`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      ...supabaseHeaders(),
+      Prefer: "resolution=merge-duplicates,return=minimal"
+    },
+    body: JSON.stringify({
+      id: LEAGUE_STATE_ID,
+      data: state
+    })
+  });
+
+  if (!response.ok) {
+    alert("Bewaren in de centrale database is mislukt. Controleer Supabase policies/config.");
+    return false;
+  }
+
+  return true;
+}
+
+function supabaseHeaders() {
+  return {
+    apikey: CONFIG.supabaseAnonKey,
+    Authorization: `Bearer ${CONFIG.supabaseAnonKey}`,
+    "Content-Type": "application/json"
+  };
 }
 
 function playerName(id) {
@@ -235,11 +279,11 @@ function earlyLoad(match, statsById) {
   }, 0);
 }
 
-function generateRound() {
+async function generateRound() {
   if (!isAdmin) return;
   const kind = roundKindForNext();
   state.rounds.unshift(createRound(nextRoundDate(), kind));
-  saveState();
+  await saveState();
   render();
 }
 
@@ -276,6 +320,7 @@ function createRound(date, kind) {
 }
 
 function render() {
+  if (!isLoaded) return;
   const stats = computeStats();
   document.body.classList.toggle("is-admin", isAdmin);
   const hasScores = stats.some((row) => row.matches > 0);
@@ -549,15 +594,17 @@ function buildScoreLog() {
 els.adminToggle.addEventListener("click", () => {
   if (isAdmin) {
     isAdmin = false;
-    sessionStorage.removeItem(ADMIN_SESSION_KEY);
     render();
     return;
   }
 
   const code = prompt("Admincode");
   if (code !== ADMIN_CODE) return;
+  if (!hasSupabaseConfig()) {
+    alert("Centrale database is nog niet ingesteld. Zet Supabase aan in config.js om als admin te wijzigen.");
+    return;
+  }
   isAdmin = true;
-  sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
   render();
 });
 
@@ -565,34 +612,34 @@ els.nextRoundButton.addEventListener("click", showNextRoundDetails);
 
 els.generateRound.addEventListener("click", generateRound);
 
-els.loadDemo.addEventListener("click", () => {
+els.loadDemo.addEventListener("click", async () => {
   if (!isAdmin) return;
   if (!confirm("Zes fictieve rondes laden? Dit vervangt de huidige rondes.")) return;
   loadDemoRounds();
-  saveState();
+  await saveState();
   render();
 });
 
 document.querySelectorAll("[data-round-type]").forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", async () => {
     if (!isAdmin) return;
     state.roundType = button.dataset.roundType;
-    saveState();
+    await saveState();
     render();
   });
 });
 
-els.savePlayers.addEventListener("click", () => {
+els.savePlayers.addEventListener("click", async () => {
   if (!isAdmin) return;
   document.querySelectorAll("#players-list input").forEach((input) => {
     const player = state.players.find((item) => item.id === input.dataset.playerId);
     if (player) player.name = input.value.trim() || player.name;
   });
-  saveState();
+  await saveState();
   render();
 });
 
-els.rounds.addEventListener("input", (event) => {
+els.rounds.addEventListener("change", async (event) => {
   if (!isAdmin) return;
   const input = event.target.closest("input[data-score]");
   if (!input) return;
@@ -600,16 +647,16 @@ els.rounds.addEventListener("input", (event) => {
   const { match } = findMatch(card.dataset.roundId, card.dataset.matchId);
   if (!match) return;
   match[input.dataset.score] = input.value === "" ? "" : Number(input.value);
-  saveState();
-  renderLeaderboard();
+  await saveState();
+  render();
 });
 
-els.rounds.addEventListener("click", (event) => {
+els.rounds.addEventListener("click", async (event) => {
   if (!isAdmin) return;
   const deleteButton = event.target.closest("[data-delete-round]");
   if (deleteButton) {
     state.rounds = state.rounds.filter((round) => round.id !== deleteButton.dataset.deleteRound);
-    saveState();
+    await saveState();
     render();
     return;
   }
@@ -638,7 +685,7 @@ els.rounds.addEventListener("click", (event) => {
   els.subDialog.showModal();
 });
 
-els.subDialog.addEventListener("close", () => {
+els.subDialog.addEventListener("close", async () => {
   if (!isAdmin) return;
   if (!activeSubContext || els.subDialog.returnValue === "cancel") return;
   const { match } = findMatch(activeSubContext.roundId, activeSubContext.matchId);
@@ -653,23 +700,23 @@ els.subDialog.addEventListener("close", () => {
   }
 
   activeSubContext = null;
-  saveState();
+  await saveState();
   render();
 });
 
-els.clearRounds.addEventListener("click", () => {
+els.clearRounds.addEventListener("click", async () => {
   if (!isAdmin) return;
   if (!confirm("Alle rondes en scores wissen?")) return;
   state.rounds = [];
-  saveState();
+  await saveState();
   render();
 });
 
-els.resetDemo.addEventListener("click", () => {
+els.resetDemo.addEventListener("click", async () => {
   if (!isAdmin) return;
   if (!confirm("Spelers en rondes resetten?")) return;
   state = structuredClone(defaultState);
-  saveState();
+  await saveState();
   render();
 });
 
@@ -701,7 +748,7 @@ els.importData.addEventListener("change", async (event) => {
       rounds: Array.isArray(imported.rounds) ? imported.rounds : [],
       roundType: imported.roundType || "auto"
     };
-    saveState();
+    await saveState();
     render();
   } catch (error) {
     alert(`Importeren mislukt: ${error.message}`);
@@ -757,4 +804,9 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js").catch(() => {});
 }
 
-render();
+async function init() {
+  await loadState();
+  render();
+}
+
+init();
