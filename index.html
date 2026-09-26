@@ -24,10 +24,10 @@
           <span>Koploper</span>
           <strong id="leader-name">-</strong>
         </div>
-        <div>
+        <button class="hero-stat-button" id="next-round-button" type="button">
           <span>Volgende ronde</span>
           <strong id="next-date">-</strong>
-        </div>
+        </button>
         <div>
           <span>Rondes</span>
           <strong id="round-count">0</strong>
@@ -166,6 +166,19 @@
           <button value="remove" class="ghost danger" type="submit">Verwijderen</button>
           <button value="save" class="primary" type="submit">Opslaan</button>
         </menu>
+      </form>
+    </dialog>
+
+    <dialog id="next-round-dialog">
+      <form method="dialog" class="dialog-body next-round-dialog">
+        <div class="dialog-title-row">
+          <div>
+            <p class="eyebrow" id="next-round-kind">Volgende ronde</p>
+            <h2 id="next-round-title">Ronde</h2>
+          </div>
+          <button class="ghost small" value="close" type="submit">Sluiten</button>
+        </div>
+        <div id="next-round-details" class="next-round-details"></div>
       </form>
     </dialog>
 

@@ -235,13 +235,36 @@ body.is-admin .admin-panel.admin-only {
   margin-top: 22px;
 }
 
-.hero-stats div {
+.hero-stats div,
+.hero-stat-button {
   min-width: 0;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
   padding: 10px 11px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
+}
+
+.hero-stat-button {
+  display: block;
+  min-height: auto;
+  color: #fff;
+  text-align: left;
+  transform: none;
+}
+
+.hero-stat-button:hover {
+  border-color: rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.hero-stat-button::after {
+  content: ">";
+  float: right;
+  margin-top: -1.45rem;
+  color: rgba(255, 255, 255, 0.58);
+  font-weight: 900;
 }
 
 .hero-stats span {
@@ -671,6 +694,58 @@ dialog::backdrop {
   padding: 18px;
 }
 
+.next-round-dialog {
+  gap: 16px;
+}
+
+.dialog-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.next-round-details {
+  display: grid;
+  gap: 10px;
+}
+
+.next-match-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.next-match-card h3 {
+  margin: 2px 0 0;
+  font-size: 1rem;
+}
+
+.next-match-teams {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.next-match-teams strong {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--soft);
+  line-height: 1.25;
+}
+
+.next-match-teams span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+}
+
 .dialog-body h2 {
   margin: 0;
 }
@@ -712,6 +787,10 @@ menu {
   }
 
   .hero-stats div {
+    padding: 9px 8px;
+  }
+
+  .hero-stat-button {
     padding: 9px 8px;
   }
 
@@ -801,6 +880,22 @@ menu {
 
   .team input {
     min-height: 48px;
+  }
+
+  #next-round-dialog {
+    width: 100%;
+    max-width: none;
+    margin: auto 0 0;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .next-match-teams {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .next-match-teams span {
+    display: none;
   }
 
   menu {

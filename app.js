@@ -30,6 +30,7 @@ const els = {
   adminToggle: document.querySelector("#admin-toggle"),
   adminState: document.querySelector("#admin-state"),
   leaderName: document.querySelector("#leader-name"),
+  nextRoundButton: document.querySelector("#next-round-button"),
   nextDate: document.querySelector("#next-date"),
   roundCount: document.querySelector("#round-count"),
   leaderboard: document.querySelector("#leaderboard"),
@@ -45,7 +46,11 @@ const els = {
   importData: document.querySelector("#import-data"),
   subDialog: document.querySelector("#sub-dialog"),
   subPlayer: document.querySelector("#sub-player"),
-  subName: document.querySelector("#sub-name")
+  subName: document.querySelector("#sub-name"),
+  nextRoundDialog: document.querySelector("#next-round-dialog"),
+  nextRoundKind: document.querySelector("#next-round-kind"),
+  nextRoundTitle: document.querySelector("#next-round-title"),
+  nextRoundDetails: document.querySelector("#next-round-details")
 };
 
 function loadState() {
@@ -107,6 +112,28 @@ function nextRoundDate() {
   if (!state.rounds.length) return COMPETITION_START_DATE;
   const latest = state.rounds.reduce((max, round) => (round.date > max ? round.date : max), state.rounds[0].date);
   return addWeeks(latest, 1);
+}
+
+function hasCompleteScore(match) {
+  return match.scoreA !== "" && match.scoreB !== "";
+}
+
+function getNextRoundInfo() {
+  const openRound = [...state.rounds]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .find((round) => round.matches.some((match) => !hasCompleteScore(match)));
+
+  if (openRound) {
+    return {
+      round: openRound,
+      status: "Gepland"
+    };
+  }
+
+  return {
+    round: createRound(nextRoundDate(), roundKindForNext()),
+    status: "Preview"
+  };
 }
 
 function computeStats() {
@@ -241,9 +268,11 @@ function render() {
   const stats = computeStats();
   document.body.classList.toggle("is-admin", isAdmin);
   const hasScores = stats.some((row) => row.matches > 0);
+  const nextRoundInfo = getNextRoundInfo();
   els.adminToggle.textContent = isAdmin ? "Sluiten" : "Admin";
   els.adminState.textContent = isAdmin ? "Ontgrendeld" : "Vergrendeld";
-  els.nextDate.textContent = formatDate(nextRoundDate());
+  els.nextDate.textContent = formatDate(nextRoundInfo.round.date);
+  els.nextRoundButton.title = "Bekijk details van de volgende ronde";
   els.roundCount.textContent = state.rounds.length;
   els.leaderName.textContent = hasScores && stats[0] ? stats[0].name : "Nog geen scores";
   renderRoundType();
@@ -410,6 +439,40 @@ function findMatch(roundId, matchId) {
   return { round, match };
 }
 
+function showNextRoundDetails() {
+  const { round, status } = getNextRoundInfo();
+  els.nextRoundKind.textContent = `${status} - ${round.kind === "full" ? "Iedereen om 19:00" : "Splitweek"}`;
+  els.nextRoundTitle.textContent = formatDate(round.date);
+  els.nextRoundDetails.replaceChildren(
+    ...round.matches.map((match) => {
+      const article = document.createElement("article");
+      article.className = "next-match-card";
+      article.innerHTML = `
+        <div>
+          <p class="label">${match.time} - Terrein ${match.court}</p>
+          <h3>Match ${match.court}</h3>
+        </div>
+        <div class="next-match-teams">
+          <strong>${renderTeamPlain(match.teamA, match.substitutes)}</strong>
+          <span>vs</span>
+          <strong>${renderTeamPlain(match.teamB, match.substitutes)}</strong>
+        </div>
+      `;
+      return article;
+    })
+  );
+  els.nextRoundDialog.showModal();
+}
+
+function renderTeamPlain(team, substitutes = {}) {
+  return team
+    .map((playerId) => {
+      const substitute = substitutes[playerId] ? ` (${substitutes[playerId]})` : "";
+      return `${escapeHtml(playerName(playerId))}${escapeHtml(substitute)}`;
+    })
+    .join(" + ");
+}
+
 els.adminToggle.addEventListener("click", () => {
   if (isAdmin) {
     isAdmin = false;
@@ -424,6 +487,8 @@ els.adminToggle.addEventListener("click", () => {
   sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
   render();
 });
+
+els.nextRoundButton.addEventListener("click", showNextRoundDetails);
 
 els.generateRound.addEventListener("click", generateRound);
 
