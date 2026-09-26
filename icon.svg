@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Padel Thursday icon">
+  <rect width="128" height="128" rx="24" fill="#14342b"/>
+  <circle cx="82" cy="40" r="15" fill="#d9a441"/>
+  <path d="M39 32c13-13 35-14 48-1 12 12 12 33-1 46L58 105 13 60l26-28z" fill="#f7fbf3"/>
+  <path d="M45 39c10-10 26-10 36 0 9 10 9 25-1 35L58 96 22 60l23-21z" fill="#256d5a"/>
+  <path d="M36 57h39M43 47h25M45 69h22M55 37v46M67 41v30" stroke="#f7fbf3" stroke-width="5" stroke-linecap="round"/>
+</svg>

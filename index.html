@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#14342b">
+    <title>Padel Thursday</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Thursday league</p>
+        <h1>Padel Thursday</h1>
+      </div>
+      <div class="header-actions">
+        <button class="ghost" id="export-data" type="button">Export</button>
+        <label class="ghost file-button">
+          Import
+          <input id="import-data" type="file" accept="application/json">
+        </label>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="toolbar" aria-label="Round controls">
+        <div>
+          <p class="label">Next Thursday</p>
+          <strong id="next-date">-</strong>
+        </div>
+        <div class="segmented" aria-label="Round type">
+          <button class="active" data-round-type="auto" type="button">Auto</button>
+          <button data-round-type="full" type="button">All 19:00</button>
+          <button data-round-type="split" type="button">Split</button>
+        </div>
+        <button class="primary" id="generate-round" type="button">Generate Round</button>
+        <button class="ghost" id="load-demo" type="button">Load Demo</button>
+      </section>
+
+      <section class="grid">
+        <article class="panel leaderboard-panel">
+          <div class="panel-title">
+            <div>
+              <p class="eyebrow">Championship</p>
+              <h2>Leaderboard</h2>
+            </div>
+            <button class="small" id="reset-demo" type="button">Reset</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Player</th>
+                  <th>Games</th>
+                  <th>Matches</th>
+                  <th>19:00</th>
+                  <th>20:30</th>
+                  <th>Penalty</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-title">
+            <div>
+              <p class="eyebrow">Regular group</p>
+              <h2>Players</h2>
+            </div>
+            <button class="small" id="save-players" type="button">Save</button>
+          </div>
+          <div id="players-list" class="players-list"></div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">Schedule and results</p>
+            <h2>Rounds</h2>
+          </div>
+          <button class="small danger" id="clear-rounds" type="button">Clear Rounds</button>
+        </div>
+        <div id="rounds" class="rounds"></div>
+      </section>
+    </main>
+
+    <template id="player-row-template">
+      <label class="player-row">
+        <span></span>
+        <input type="text" maxlength="32">
+      </label>
+    </template>
+
+    <template id="match-template">
+      <article class="match-card">
+        <div class="match-head">
+          <div>
+            <p class="label match-time"></p>
+            <h3></h3>
+          </div>
+          <button class="small ghost mark-sub" type="button">Substitute</button>
+        </div>
+        <div class="teams">
+          <div class="team" data-team="a">
+            <p></p>
+            <input inputmode="numeric" min="0" max="99" type="number" aria-label="Team A score">
+          </div>
+          <strong>vs</strong>
+          <div class="team" data-team="b">
+            <p></p>
+            <input inputmode="numeric" min="0" max="99" type="number" aria-label="Team B score">
+          </div>
+        </div>
+        <div class="subs"></div>
+      </article>
+    </template>
+
+    <dialog id="sub-dialog">
+      <form method="dialog" class="dialog-body">
+        <h2>Substitute</h2>
+        <label>
+          Regular player
+          <select id="sub-player"></select>
+        </label>
+        <label>
+          Substitute name
+          <input id="sub-name" type="text" maxlength="32" placeholder="Outside player">
+        </label>
+        <menu>
+          <button value="cancel" type="submit">Cancel</button>
+          <button value="remove" class="ghost danger" type="submit">Remove</button>
+          <button value="save" class="primary" type="submit">Save</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
