@@ -1,6 +1,7 @@
 const ADMIN_CODE = "padel26/27";
 const PENALTY_GAMES = 2;
 const COMPETITION_START_DATE = "2026-10-01";
+const GITHUB_API_URL = "https://api.github.com/repos/dfence/padel/contents/data/league-state.json";
 
 const defaultState = {
   players: [
@@ -23,6 +24,8 @@ let state = structuredClone(defaultState);
 let activeSubContext = null;
 let isAdmin = false;
 let isLoaded = false;
+let hasUnsavedChanges = false;
+let savedStateSnapshot = null;
 
 const els = {
   adminToggle: document.querySelector("#admin-toggle"),
@@ -44,6 +47,11 @@ const els = {
   exportData: document.querySelector("#export-data"),
   exportLog: document.querySelector("#export-log"),
   importData: document.querySelector("#import-data"),
+  publishData: document.querySelector("#publish-data"),
+  githubToken: document.querySelector("#github-token"),
+  connectGitHub: document.querySelector("#connect-github"),
+  disconnectGitHub: document.querySelector("#disconnect-github"),
+  githubStatus: document.querySelector("#github-status"),
   subDialog: document.querySelector("#sub-dialog"),
   subPlayer: document.querySelector("#sub-player"),
   subName: document.querySelector("#sub-name"),
@@ -57,9 +65,11 @@ async function loadState() {
   try {
     const loadedState = await loadStaticState();
     state = normalizeLoadedState(loadedState);
+    savedStateSnapshot = structuredClone(state);
   } catch (error) {
     console.warn("Centrale data laden mislukt", error);
     state = structuredClone(defaultState);
+    savedStateSnapshot = null;
   } finally {
     isLoaded = true;
   }
@@ -95,7 +105,102 @@ async function loadStaticState() {
 }
 
 async function saveState() {
+  hasUnsavedChanges = true;
   return true;
+}
+
+function updatePublishStatus() {
+  const token = localStorage.getItem("padel-github-token");
+  els.githubStatus.textContent = token ? "Gekoppeld op dit apparaat" : "Niet gekoppeld";
+  els.publishData.textContent = hasUnsavedChanges ? "Opslaan op website (wijzigingen)" : "Opslaan op website";
+}
+
+function githubHeaders(token) {
+  return {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+}
+
+function decodeBase64Utf8(content) {
+  const binary = atob(content.replace(/\s/g, ""));
+  return new TextDecoder().decode(Uint8Array.from(binary, (char) => char.charCodeAt(0)));
+}
+
+function encodeBase64Utf8(value) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  for (let index = 0; index < bytes.length; index += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+  }
+  return btoa(binary);
+}
+
+async function connectGitHub() {
+  const token = els.githubToken.value.trim();
+  if (!token) { alert("Plak eerst je GitHub-token."); return; }
+  els.connectGitHub.disabled = true;
+  els.githubStatus.textContent = "Verbinding controleren...";
+  try {
+    const response = await fetch(`${GITHUB_API_URL}?ref=main`, { headers: githubHeaders(token), cache: "no-store" });
+    if (!response.ok) throw new Error(response.status === 401 || response.status === 403
+      ? "GitHub heeft het token geweigerd. Controleer de Contents lees- en schrijfrechten."
+      : `GitHub antwoordde met fout ${response.status}.`);
+    localStorage.setItem("padel-github-token", token);
+    els.githubToken.value = "";
+    updatePublishStatus();
+    alert("Apparaat gekoppeld. Je kunt uitslagen nu rechtstreeks opslaan op de website.");
+  } catch (error) {
+    els.githubStatus.textContent = "Koppelen mislukt";
+    alert(error.message);
+  } finally {
+    els.connectGitHub.disabled = false;
+  }
+}
+
+async function publishState() {
+  if (!isAdmin) return;
+  const token = localStorage.getItem("padel-github-token");
+  if (!token) { alert("Koppel dit apparaat eerst aan GitHub in het onderdeel Website koppelen."); return; }
+  els.publishData.disabled = true;
+  els.publishData.textContent = "Opslaan...";
+  try {
+    const headers = githubHeaders(token);
+    const response = await fetch(`${GITHUB_API_URL}?ref=main`, { headers, cache: "no-store" });
+    if (!response.ok) throw new Error(`GitHub kon de huidige competitiegegevens niet lezen (fout ${response.status}).`);
+    const file = await response.json();
+    const remoteState = normalizeLoadedState(JSON.parse(decodeBase64Utf8(file.content)));
+    if (!savedStateSnapshot) {
+      throw new Error("De huidige stand is niet goed geladen. Vernieuw de pagina en probeer opnieuw.");
+    }
+    if (JSON.stringify(remoteState) !== JSON.stringify(savedStateSnapshot)) {
+      throw new Error("De website is sinds het laden op een ander apparaat bijgewerkt. Vernieuw deze pagina eerst zodat je die wijzigingen niet overschrijft.");
+    }
+    const content = `${JSON.stringify(state, null, 2)}\n`;
+    const putResponse = await fetch(GITHUB_API_URL, {
+      method: "PUT",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Update padelcompetitie ${new Date().toISOString().slice(0, 10)}`,
+        content: encodeBase64Utf8(content),
+        sha: file.sha,
+        branch: "main"
+      })
+    });
+    if (!putResponse.ok) {
+      const details = await putResponse.json().catch(() => ({}));
+      throw new Error(details.message || `Opslaan bij GitHub mislukt (fout ${putResponse.status}).`);
+    }
+    savedStateSnapshot = structuredClone(state);
+    hasUnsavedChanges = false;
+    updatePublishStatus();
+    alert("Opgeslagen op GitHub. De website wordt nu bijgewerkt.");
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    updatePublishStatus();
+  }
 }
 
 function playerName(id) {
@@ -290,6 +395,7 @@ function render() {
   renderPlayers();
   renderLeaderboard(stats);
   renderRounds();
+  updatePublishStatus();
 }
 
 function renderRoundType() {
@@ -371,7 +477,10 @@ function renderRounds() {
         <p class="eyebrow">${round.kind === "full" ? "Iedereen om 19:00" : "Splitweek"}</p>
         <h3>${formatDate(round.date)}</h3>
       </div>
-      <button class="small ghost danger admin-only" data-delete-round="${round.id}" type="button">Verwijderen</button>
+      <div class="round-actions">
+        <button class="small primary admin-only" data-publish-round type="button">Scores opslaan</button>
+        <button class="small ghost danger admin-only" data-delete-round="${round.id}" type="button">Verwijderen</button>
+      </div>
     `;
     section.append(header);
 
@@ -561,7 +670,24 @@ els.adminToggle.addEventListener("click", () => {
 
 els.nextRoundButton.addEventListener("click", showNextRoundDetails);
 
-els.generateRound.addEventListener("click", generateRound);
+els.generateRound.addEventListener("click", async () => {
+  if (!localStorage.getItem("padel-github-token")) {
+    alert("Koppel dit apparaat eerst in Website koppelen. Daarna maakt deze knop de ronde en slaat alles op.");
+    return;
+  }
+  if (state.rounds.some((round) => round.matches.some((match) => !hasCompleteScore(match)))) {
+    alert("Vul eerst alle scores van de geplande rondes in.");
+    return;
+  }
+  await generateRound();
+  await publishState();
+});
+els.publishData.addEventListener("click", publishState);
+els.connectGitHub.addEventListener("click", connectGitHub);
+els.disconnectGitHub.addEventListener("click", () => {
+  localStorage.removeItem("padel-github-token");
+  updatePublishStatus();
+});
 
 els.loadDemo.addEventListener("click", async () => {
   if (!isAdmin) return;
@@ -604,6 +730,10 @@ els.rounds.addEventListener("change", async (event) => {
 
 els.rounds.addEventListener("click", async (event) => {
   if (!isAdmin) return;
+  if (event.target.closest("[data-publish-round]")) {
+    await publishState();
+    return;
+  }
   const deleteButton = event.target.closest("[data-delete-round]");
   if (deleteButton) {
     state.rounds = state.rounds.filter((round) => round.id !== deleteButton.dataset.deleteRound);

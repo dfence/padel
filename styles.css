@@ -601,6 +601,28 @@ select {
   margin-bottom: 12px;
 }
 
+.round-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.admin-setup-link {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#github-token {
+  min-width: min(100%, 280px);
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
 .round-header h3 {
   margin: 0;
 }
@@ -838,7 +860,8 @@ menu {
   }
 
   .toolbar button,
-  .file-button {
+  .file-button,
+  .admin-setup-link {
     width: 100%;
   }
 
@@ -874,6 +897,16 @@ menu {
 
   .round-header {
     align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .round-actions {
+    width: 100%;
+  }
+
+  .round-actions button {
+    flex: 1;
+    min-height: 44px;
   }
 
   .teams {

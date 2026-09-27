@@ -47,7 +47,9 @@
           <button data-round-type="full" type="button">Alles 19:00</button>
           <button data-round-type="split" type="button">Split</button>
         </div>
-        <button class="primary" id="generate-round" type="button">Ronde maken</button>
+        <button class="primary" id="generate-round" type="button">Volgende ronde maken + opslaan</button>
+        <button class="primary" id="publish-data" type="button">Opslaan op website</button>
+        <a class="ghost admin-setup-link" href="#admin-setup">Website koppelen</a>
         <button class="ghost" id="load-demo" type="button">Demo laden</button>
       </section>
 
@@ -111,22 +113,30 @@
         <div id="rounds" class="rounds"></div>
       </section>
 
-      <section class="panel admin-panel admin-only">
+      <section class="panel admin-panel admin-only" id="admin-setup">
         <div class="panel-title">
           <div>
-            <p class="eyebrow">Back-up</p>
-            <h2>Data</h2>
+            <p class="eyebrow">Eenmalig instellen</p>
+            <h2>Website koppelen</h2>
           </div>
         </div>
+        <p>Eenmalig per telefoon: maak een fijnmazig GitHub-token voor alleen <strong>dfence/padel</strong> met Contents lees- en schrijfrechten. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Token maken op GitHub</a>. Plak het hieronder; het blijft alleen op dit apparaat bewaard.</p>
         <div class="data-actions">
-          <button class="ghost" id="export-data" type="button">league-state.json downloaden</button>
+          <input id="github-token" type="password" autocomplete="off" placeholder="GitHub-token" aria-label="GitHub-token">
+          <button class="ghost" id="connect-github" type="button">Koppelen</button>
+          <button class="ghost" id="disconnect-github" type="button">Ontkoppelen</button>
+          <span id="github-status" class="fine-print">Niet gekoppeld</span>
+        </div>
+        <p class="fine-print">Selecteer alleen repository dfence/padel en geef Contents lees- en schrijfrechten. Dit hoef je per apparaat één keer te doen. Bewaar het token alleen op je eigen telefoon.</p>
+        <div class="data-actions">
+          <button class="ghost" id="export-data" type="button">Back-up downloaden (JSON)</button>
           <button class="ghost" id="export-log" type="button">Scorelog downloaden</button>
           <label class="ghost file-button">
             JSON importeren
             <input id="import-data" type="file" accept="application/json">
           </label>
         </div>
-        <p class="fine-print">GitHub Pages kan dit bestand niet zelf overschrijven. Download na wijzigingen league-state.json en vervang daarmee data/league-state.json in GitHub.</p>
+        <p class="fine-print">Vul uitslagen rechtstreeks in bij de wedstrijden. Tik op ‘Opslaan op website’ om ze voor iedereen te publiceren. Maak daarna de volgende ronde.</p>
       </section>
     </main>
 
