@@ -44,7 +44,7 @@
       "matches": [
         {
           "id": "20261008-0000-4000-8000-000000000005",
-          "time": "19:00",
+          "time": "20:30",
           "court": 1,
           "teamA": ["ben", "geert"],
           "teamB": ["carl", "wesley"],
@@ -54,7 +54,7 @@
         },
         {
           "id": "20261008-0000-4000-8000-000000000006",
-          "time": "20:30",
+          "time": "19:00",
           "court": 2,
           "teamA": ["tom", "michel"],
           "teamB": ["stefan", "philip"],
