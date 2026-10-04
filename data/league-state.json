@@ -21,8 +21,8 @@
           "court": 1,
           "teamA": ["philip", "michel"],
           "teamB": ["tom", "stefan"],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": "13",
+          "scoreB": "15",
           "substitutes": {}
         },
         {
@@ -31,9 +31,36 @@
           "court": 2,
           "teamA": ["ben", "carl"],
           "teamB": ["geert", "wesley"],
+          "scoreA": "18",
+          "scoreB": "6",
+          "substitutes": { "geert": "Pascal DB" }
+        }
+      ]
+    },
+    {
+      "id": "20261008-0000-4000-8000-000000000004",
+      "date": "2026-10-08",
+      "kind": "split",
+      "matches": [
+        {
+          "id": "20261008-0000-4000-8000-000000000005",
+          "time": "19:00",
+          "court": 1,
+          "teamA": ["ben", "geert"],
+          "teamB": ["carl", "wesley"],
           "scoreA": "",
           "scoreB": "",
-          "substitutes": { "geert": "Pascal DB" }
+          "substitutes": {}
+        },
+        {
+          "id": "20261008-0000-4000-8000-000000000006",
+          "time": "20:30",
+          "court": 2,
+          "teamA": ["tom", "michel"],
+          "teamB": ["stefan", "philip"],
+          "scoreA": "",
+          "scoreB": "",
+          "substitutes": {}
         }
       ]
     }
