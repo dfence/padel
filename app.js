@@ -7,10 +7,10 @@ const defaultState = {
   players: [
     { id: "philip", name: "Philip" },
     { id: "tom", name: "Tom" },
+    { id: "carl", name: "Carl" },
     { id: "ben", name: "Ben" },
     { id: "geert", name: "Geert" },
     { id: "wesley", name: "Wesley" },
-    { id: "carl", name: "Carl" },
     { id: "stefan", name: "Stefan" },
     { id: "michel", name: "Michel" }
   ],
