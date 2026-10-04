@@ -2,10 +2,10 @@
   "players": [
     { "id": "philip", "name": "Philip" },
     { "id": "tom", "name": "Tom" },
+    { "id": "carl", "name": "Carl" },
     { "id": "ben", "name": "Ben" },
     { "id": "geert", "name": "Geert" },
     { "id": "wesley", "name": "Wesley" },
-    { "id": "carl", "name": "Carl" },
     { "id": "stefan", "name": "Stefan" },
     { "id": "michel", "name": "Michel" }
   ],
@@ -46,8 +46,8 @@
           "id": "20261008-0000-4000-8000-000000000005",
           "time": "20:30",
           "court": 1,
-          "teamA": ["ben", "geert"],
-          "teamB": ["carl", "wesley"],
+          "teamA": ["carl", "geert"],
+          "teamB": ["ben", "wesley"],
           "scoreA": "",
           "scoreB": "",
           "substitutes": {}
