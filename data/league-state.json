@@ -43,21 +43,21 @@
       "kind": "split",
       "matches": [
         {
-          "id": "20261008-0000-4000-8000-000000000005",
-          "time": "20:30",
+          "id": "20261008-0000-4000-8000-000000000006",
+          "time": "19:00",
           "court": 1,
-          "teamA": ["carl", "geert"],
-          "teamB": ["ben", "wesley"],
+          "teamA": ["tom", "michel"],
+          "teamB": ["stefan", "philip"],
           "scoreA": "",
           "scoreB": "",
           "substitutes": {}
         },
         {
-          "id": "20261008-0000-4000-8000-000000000006",
-          "time": "19:00",
+          "id": "20261008-0000-4000-8000-000000000005",
+          "time": "20:30",
           "court": 2,
-          "teamA": ["tom", "michel"],
-          "teamB": ["stefan", "philip"],
+          "teamA": ["carl", "geert"],
+          "teamB": ["ben", "wesley"],
           "scoreA": "",
           "scoreB": "",
           "substitutes": {}

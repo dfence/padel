@@ -364,10 +364,16 @@ function createRound(date, kind) {
     const firstLoad = earlyLoad(matches[0], statsById);
     const secondLoad = earlyLoad(matches[1], statsById);
     const earlyIndex = firstLoad <= secondLoad ? 0 : 1;
-    matches = matches.map((match, index) => ({
-      ...match,
-      time: index === earlyIndex ? "19:00" : "20:30"
-    }));
+    matches = matches
+      .map((match, index) => ({
+        ...match,
+        time: index === earlyIndex ? "19:00" : "20:30"
+      }))
+      .sort((a, b) => a.time.localeCompare(b.time))
+      .map((match, index) => ({
+        ...match,
+        court: index + 1
+      }));
   }
 
   return {
@@ -500,7 +506,7 @@ function renderMatch(round, match) {
   const card = template.content.firstElementChild.cloneNode(true);
   card.dataset.roundId = round.id;
   card.dataset.matchId = match.id;
-  card.querySelector(".match-time").textContent = `${match.time} - Terrein ${match.court}`;
+  card.querySelector(".match-time").textContent = `Match ${match.court} om ${match.time}`;
   card.querySelector("h3").textContent = `Match ${match.court}`;
 
   const teamA = card.querySelector('[data-team="a"]');
@@ -570,7 +576,7 @@ function showNextRoundDetails() {
       article.className = "next-match-card";
       article.innerHTML = `
         <div>
-          <p class="label">${match.time} - Terrein ${match.court}</p>
+          <p class="label">Match ${match.court} om ${match.time}</p>
           <h3>Match ${match.court}</h3>
         </div>
         <div class="next-match-teams">
@@ -630,7 +636,7 @@ function buildScoreLog() {
     lines.push("");
 
     round.matches.forEach((match) => {
-      lines.push(`- ${match.time}, terrein ${match.court}: ${renderTeamPlain(match.teamA, match.substitutes)} ${match.scoreA}-${match.scoreB} ${renderTeamPlain(match.teamB, match.substitutes)}`);
+      lines.push(`- Match ${match.court} om ${match.time}: ${renderTeamPlain(match.teamA, match.substitutes)} ${match.scoreA}-${match.scoreB} ${renderTeamPlain(match.teamB, match.substitutes)}`);
     });
 
     const substitutions = round.matches.flatMap((match) => {
