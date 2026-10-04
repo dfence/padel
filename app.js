@@ -472,9 +472,10 @@ function renderRounds() {
 
     const header = document.createElement("div");
     header.className = "round-header";
+    const roundStatusLabel = round.matches.every(hasCompleteScore) ? "Gespeelde ronde" : "Volgende ronde";
     header.innerHTML = `
       <div>
-        <p class="eyebrow">${round.kind === "full" ? "Iedereen om 19:00" : "Splitweek"}</p>
+        <p class="eyebrow">${roundStatusLabel}</p>
         <h3>${formatDate(round.date)}</h3>
       </div>
       <div class="round-actions">
@@ -561,7 +562,7 @@ function findMatch(roundId, matchId) {
 
 function showNextRoundDetails() {
   const { round, status } = getNextRoundInfo();
-  els.nextRoundKind.textContent = `${status} - ${round.kind === "full" ? "Iedereen om 19:00" : "Splitweek"}`;
+  els.nextRoundKind.textContent = status;
   els.nextRoundTitle.textContent = formatDate(round.date);
   els.nextRoundDetails.replaceChildren(
     ...round.matches.map((match) => {
@@ -625,7 +626,7 @@ function buildScoreLog() {
   playedRounds.forEach((round, roundIndex) => {
     lines.push(`## Ronde ${roundIndex + 1} - ${formatDate(round.date)}`);
     lines.push("");
-    lines.push(`Type: ${round.kind === "full" ? "Iedereen om 19:00" : "Splitweek"}`);
+    lines.push(`Type: ${round.kind === "full" ? "Iedereen om 19:00" : "Gesplitste uren"}`);
     lines.push("");
 
     round.matches.forEach((match) => {
