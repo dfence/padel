@@ -8,6 +8,8 @@ Gepubliceerde site: `https://dfence.github.io/padel/`.
 
 De competitie start op donderdag `2026-10-01`.
 
+De volledige berekening van stand, strafpunten, volgorde bij gelijke score en volgende ronde staat in `COMPETITIE_LOGICA.md`.
+
 ## Scores en rondes beheren
 
 Iedereen leest dezelfde competitiegegevens uit `data/league-state.json`. Koppel een beheerapparaat één keer met een fijnmazig GitHub-token dat alleen schrijfrechten heeft op de repository `dfence/padel`:
