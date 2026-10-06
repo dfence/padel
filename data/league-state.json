@@ -1,13 +1,37 @@
 {
   "players": [
-    { "id": "philip", "name": "Philip" },
-    { "id": "tom", "name": "Tom" },
-    { "id": "carl", "name": "Carl" },
-    { "id": "ben", "name": "Ben" },
-    { "id": "geert", "name": "Geert" },
-    { "id": "wesley", "name": "Wesley" },
-    { "id": "stefan", "name": "Stefan" },
-    { "id": "michel", "name": "Michel" }
+    {
+      "id": "philip",
+      "name": "Philip"
+    },
+    {
+      "id": "tom",
+      "name": "Tom"
+    },
+    {
+      "id": "carl",
+      "name": "Carl"
+    },
+    {
+      "id": "ben",
+      "name": "Ben"
+    },
+    {
+      "id": "geert",
+      "name": "Geert"
+    },
+    {
+      "id": "wesley",
+      "name": "Wesley"
+    },
+    {
+      "id": "stefan",
+      "name": "Stefan"
+    },
+    {
+      "id": "michel",
+      "name": "Michel"
+    }
   ],
   "rounds": [
     {
@@ -19,8 +43,14 @@
           "id": "20261001-0000-4000-8000-000000000002",
           "time": "19:00",
           "court": 1,
-          "teamA": ["philip", "michel"],
-          "teamB": ["tom", "stefan"],
+          "teamA": [
+            "philip",
+            "michel"
+          ],
+          "teamB": [
+            "tom",
+            "stefan"
+          ],
           "scoreA": "13",
           "scoreB": "15",
           "substitutes": {}
@@ -29,11 +59,19 @@
           "id": "20261001-0000-4000-8000-000000000003",
           "time": "19:00",
           "court": 2,
-          "teamA": ["ben", "carl"],
-          "teamB": ["geert", "wesley"],
+          "teamA": [
+            "ben",
+            "carl"
+          ],
+          "teamB": [
+            "geert",
+            "wesley"
+          ],
           "scoreA": "18",
           "scoreB": "6",
-          "substitutes": { "geert": "Pascal DB" }
+          "substitutes": {
+            "geert": "Pascal DB"
+          }
         }
       ]
     },
@@ -46,18 +84,32 @@
           "id": "20261008-0000-4000-8000-000000000006",
           "time": "19:00",
           "court": 1,
-          "teamA": ["tom", "michel"],
-          "teamB": ["stefan", "philip"],
+          "teamA": [
+            "tom",
+            "michel"
+          ],
+          "teamB": [
+            "stefan",
+            "philip"
+          ],
           "scoreA": "",
           "scoreB": "",
-          "substitutes": {}
+          "substitutes": {
+            "tom": "David VA"
+          }
         },
         {
           "id": "20261008-0000-4000-8000-000000000005",
           "time": "20:30",
           "court": 2,
-          "teamA": ["carl", "geert"],
-          "teamB": ["ben", "wesley"],
+          "teamA": [
+            "carl",
+            "geert"
+          ],
+          "teamB": [
+            "ben",
+            "wesley"
+          ],
           "scoreA": "",
           "scoreB": "",
           "substitutes": {}
