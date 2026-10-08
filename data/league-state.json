@@ -92,8 +92,8 @@
             "stefan",
             "philip"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 12,
+          "scoreB": 17,
           "substitutes": {
             "tom": "David VA"
           }
@@ -110,8 +110,8 @@
             "ben",
             "wesley"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 19,
+          "scoreB": 16,
           "substitutes": {}
         }
       ]
