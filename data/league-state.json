@@ -35,6 +35,45 @@
   ],
   "rounds": [
     {
+      "id": "bb30956b-50cd-467f-a1cf-d52c1a26dd64",
+      "date": "2026-10-15",
+      "kind": "split",
+      "matches": [
+        {
+          "id": "17082907-4400-4c0f-aef0-38f97ef547d5",
+          "time": "19:00",
+          "court": 1,
+          "teamA": [
+            "carl",
+            "wesley"
+          ],
+          "teamB": [
+            "ben",
+            "geert"
+          ],
+          "scoreA": "",
+          "scoreB": "",
+          "substitutes": {}
+        },
+        {
+          "id": "075136b7-8397-4133-b5f7-d000cc1b1483",
+          "time": "20:30",
+          "court": 2,
+          "teamA": [
+            "stefan",
+            "michel"
+          ],
+          "teamB": [
+            "philip",
+            "tom"
+          ],
+          "scoreA": "",
+          "scoreB": "",
+          "substitutes": {}
+        }
+      ]
+    },
+    {
       "id": "20261001-0000-4000-8000-000000000001",
       "date": "2026-10-01",
       "kind": "full",
