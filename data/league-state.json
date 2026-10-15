@@ -53,7 +53,9 @@
           ],
           "scoreA": "",
           "scoreB": "",
-          "substitutes": {}
+          "substitutes": {
+            "geert": "Arne"
+          }
         },
         {
           "id": "075136b7-8397-4133-b5f7-d000cc1b1483",
@@ -67,9 +69,13 @@
             "philip",
             "tom"
           ],
-          "scoreA": "",
-          "scoreB": "",
-          "substitutes": {}
+          "scoreA": 20,
+          "scoreB": 9,
+          "substitutes": {
+            "stefan": "Pascal N",
+            "tom": "Pieter VA",
+            "philip": "Mo"
+          }
         }
       ]
     },
