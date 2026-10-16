@@ -51,8 +51,8 @@
             "ben",
             "geert"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 20,
+          "scoreB": 17,
           "substitutes": {
             "geert": "Arne"
           }
