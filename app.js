@@ -472,7 +472,8 @@ function renderRounds() {
     return;
   }
 
-  for (const round of state.rounds) {
+  const sortedRounds = [...state.rounds].sort((a, b) => b.date.localeCompare(a.date));
+  for (const round of sortedRounds) {
     const section = document.createElement("section");
     section.className = "round";
 
