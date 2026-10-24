@@ -51,8 +51,8 @@
             "ben",
             "philip"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 19,
+          "scoreB": 8,
           "substitutes": {}
         },
         {
@@ -67,8 +67,8 @@
             "michel",
             "wesley"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 20,
+          "scoreB": 11,
           "substitutes": {
             "geert": "Pascal N"
           }
