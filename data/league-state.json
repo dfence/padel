@@ -53,7 +53,9 @@
           ],
           "scoreA": "",
           "scoreB": "",
-          "substitutes": {}
+          "substitutes": {
+            "philip": "Pascal VL"
+          }
         },
         {
           "id": "82fdb5a1-abdd-4a19-b884-1ab53bb40151",
