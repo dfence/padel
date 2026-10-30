@@ -51,8 +51,8 @@
             "stefan",
             "tom"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 15,
+          "scoreB": 4,
           "substitutes": {
             "philip": "Pascal VL"
           }
@@ -69,8 +69,8 @@
             "geert",
             "michel"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 17,
+          "scoreB": 14,
           "substitutes": {}
         }
       ]
