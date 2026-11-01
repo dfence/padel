@@ -69,7 +69,9 @@
           ],
           "scoreA": "",
           "scoreB": "",
-          "substitutes": {}
+          "substitutes": {
+            "carl": "Bart J"
+          }
         }
       ]
     },
