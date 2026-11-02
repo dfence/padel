@@ -53,7 +53,9 @@
           ],
           "scoreA": "",
           "scoreB": "",
-          "substitutes": {}
+          "substitutes": {
+            "michel": "Kris VA"
+          }
         },
         {
           "id": "d0afcbae-329f-4e21-a784-9e176052592a",
