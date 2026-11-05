@@ -35,6 +35,45 @@
   ],
   "rounds": [
     {
+      "id": "c79c544f-2211-4780-8887-82cb2112a538",
+      "date": "2026-11-12",
+      "kind": "full",
+      "matches": [
+        {
+          "id": "6ec11b6e-26ed-426b-af53-8642dc224db3",
+          "time": "19:00",
+          "court": 1,
+          "teamA": [
+            "carl",
+            "tom"
+          ],
+          "teamB": [
+            "ben",
+            "philip"
+          ],
+          "scoreA": "",
+          "scoreB": "",
+          "substitutes": {}
+        },
+        {
+          "id": "8027340c-deb0-45fc-a14e-a2628fcbf4ec",
+          "time": "19:00",
+          "court": 2,
+          "teamA": [
+            "stefan",
+            "michel"
+          ],
+          "teamB": [
+            "geert",
+            "wesley"
+          ],
+          "scoreA": "",
+          "scoreB": "",
+          "substitutes": {}
+        }
+      ]
+    },
+    {
       "id": "3147c802-8dff-40f6-9126-c727f4d063b1",
       "date": "2026-11-05",
       "kind": "split",
@@ -51,8 +90,8 @@
             "geert",
             "wesley"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 15,
+          "scoreB": 13,
           "substitutes": {
             "michel": "Kris VA"
           }
@@ -69,8 +108,8 @@
             "ben",
             "philip"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 10,
+          "scoreB": 13,
           "substitutes": {
             "carl": "Bart J",
             "philip": "Pascal VL"
