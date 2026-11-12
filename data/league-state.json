@@ -53,7 +53,9 @@
           ],
           "scoreA": "",
           "scoreB": "",
-          "substitutes": {}
+          "substitutes": {
+            "tom": "David DB"
+          }
         },
         {
           "id": "8027340c-deb0-45fc-a14e-a2628fcbf4ec",
