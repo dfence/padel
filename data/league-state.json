@@ -35,6 +35,45 @@
   ],
   "rounds": [
     {
+      "id": "27fb03a4-1530-46d2-a398-57b5db2b4dab",
+      "date": "2026-11-26",
+      "kind": "split",
+      "matches": [
+        {
+          "id": "d8818df3-fad3-4fda-bb87-8143e4936597",
+          "time": "19:00",
+          "court": 1,
+          "teamA": [
+            "wesley",
+            "michel"
+          ],
+          "teamB": [
+            "geert",
+            "stefan"
+          ],
+          "scoreA": "",
+          "scoreB": "",
+          "substitutes": {}
+        },
+        {
+          "id": "36f80d1e-d4e8-4ae9-857a-42eba29d7e9d",
+          "time": "20:30",
+          "court": 2,
+          "teamA": [
+            "carl",
+            "tom"
+          ],
+          "teamB": [
+            "ben",
+            "philip"
+          ],
+          "scoreA": "",
+          "scoreB": "",
+          "substitutes": {}
+        }
+      ]
+    },
+    {
       "id": "e47d99be-9bd0-43f2-9a83-a1d9a4246265",
       "date": "2026-11-19",
       "kind": "split",
@@ -51,9 +90,11 @@
             "ben",
             "philip"
           ],
-          "scoreA": "",
-          "scoreB": "",
-          "substitutes": {}
+          "scoreA": 17,
+          "scoreB": 13,
+          "substitutes": {
+            "carl": "Yves VL"
+          }
         },
         {
           "id": "3a3af909-d25c-4571-85a8-9dac7b4d92bd",
@@ -67,8 +108,8 @@
             "geert",
             "wesley"
           ],
-          "scoreA": "",
-          "scoreB": "",
+          "scoreA": 14,
+          "scoreB": 19,
           "substitutes": {
             "geert": "David DB",
             "michel": "Rembert"
